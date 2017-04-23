@@ -16,31 +16,45 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/flight")
 @Controller
-public class ReservationController {
+public class FlightController {
 
 @Autowired
-  private ReservationDao reservationDao;
+  private FlightDao flightDao;
   
   @ResponseBody
-  @RequestMapping("{orderNumber}")
-  public String getById(@PathVariable("orderNumber") String orderNumber) {
-    String orderNumber="";
-    int price;
-    Passenger passenger;
-    List<Flights> flights;
+  @RequestMapping("{number}")
+  public String getById(@PathVariable("number") String number) {
+    private int price;   
+
+    private String number="";
+    private String from="";
+    private int seatsLeft;
+    private String to="";
+    private Date departureTime;
+    private Date arrivalTime;
+    private String description="";
+    private Plane plane;
+    private List<Passenger> passengers;
     
 
     try {
-      Reservation reservation=reservationDao.findById(orderNumber);
-      orderNumber = reservation.getOrderNumber();
-      price = reservation.getPrice();
-      passenger = reservation.getPassenger();
-      flights = reservation.getFlights();
+      Flight flight=flightDao.findById(number);
+      number = flight.getNumber();
+      price = flight.getPrice();
+      passengers = flight.getPassengers();
+      from = flight.getFrom();
+      seatsLeft=flight.getseatsLeft();
+      to=flight.getTo();
+      departureTime=flight.getDepartureTime();
+      arrivalTime=flight.getArrivalTime();
+      description=flight.getDescription();
+      plane=flight.getPlane();
+
     }
     catch (Exception ex) {
-      return "Reservation not found";
+      return "Flight not found";
     }
-    return "The order number is: " + orderNumber;
+    return "The flight number is: " + number;
   }
 
 
