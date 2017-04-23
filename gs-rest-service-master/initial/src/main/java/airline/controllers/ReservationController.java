@@ -1,10 +1,10 @@
-package controllers;
+package airline.controllers;
 import java.util.*;
-import models.Reservation;
-import models.Passenger;
-import dao.ReservationDao;
+import airline.models.Reservation;
+import airline.models.Passenger;
+import airline.dao.ReservationDao;
 import javax.sql.DataSource;
-import models.Flight;
+import airline.models.Flight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,17 +27,17 @@ public class ReservationController {
   public String getById(@PathVariable("orderNumber") String orderNumber) {
     String orderNum="";
     int price;
-    Passenger passenger;
-    List<Flight> flight;
+    String passenger;
+    // List<Flight> flight;
     
 
     try {
       //int o=Integer.parseInt(orderNum);
-      Reservation reservation=reservationDao.findById(orderNum);
+      Reservation reservation=reservationDao.findByorderNumber(orderNum);
       orderNum = reservation.getOrderNumber();
       price = reservation.getPrice();
-      passenger = reservation.getPassenger();
-      flight = reservation.getFlights();
+      passenger = reservation.getPassenger_id();
+      // flight = reservation.getFlights();
     }
     catch (Exception ex) {
       return "Reservation not found";
@@ -65,43 +65,43 @@ public class ReservationController {
   //  * GET /delete  --> Delete the user having the passed id.
   //  */
 
-  // @RequestMapping("/delete")
-  // @ResponseBody
-  // public String delete(long id) {
-  //   try {
-  //     User user = new User(id);
-  //     passengerDao.delete(user);
-  //   }
-  //   catch (Exception ex) {
-  //     return "Error deleting the user:" + ex.toString();
-  //   }
-  //   return "User succesfully deleted!";
-  // }
+ // @RequestMapping(value="{orderNumber}",method = RequestMethod.DELETE)
+ //  @ResponseBody
+ //  public String delete(@PathVariable("orderNumber") String orderNumber) {
+ //    try {
+ //      Reservation reservation = resrvationDao.findById(orderNumber);
+ //      reservationDao.delete(reservation);
+ //    }
+ //    catch (Exception ex) {
+ //      return "Error deleting the reservation:" + ex.toString();
+ //    }
+ //    return "Reservation succesfully deleted!";
+ //  }
   
   
   
-  // /**
-  //  * GET /update  --> Update the email and the name for the user in the 
-  //  * database having the passed id.
-  //  */
+ //  // /**
+ //  //  * GET /update  --> Update the email and the name for the user in the 
+ //  //  * database having the passed id.
+ //  //  */
 
 
-  // @RequestMapping("/update")
-  // @ResponseBody
-  // public String updateUser(long id, String email, String name) {
-  //   try {
-  //     User user = passengerDao.findOne(id);
-  //     user.setEmail(email);
-  //     user.setName(name);
-  //     passengerDao.save(user);
-  //   }
-  //   catch (Exception ex) {
-  //     return "Error updating the user: " + ex.toString();
-  //   }
-  //   return "User succesfully updated!";
-  // }
+ //  // @RequestMapping("/update")
+ //  // @ResponseBody
+ //  // public String updateUser(long id, String email, String name) {
+ //  //   try {
+ //  //     User user = passengerDao.findOne(id);
+ //  //     user.setEmail(email);
+ //  //     user.setName(name);
+ //  //     passengerDao.save(user);
+ //  //   }
+ //  //   catch (Exception ex) {
+ //  //     return "Error updating the user: " + ex.toString();
+ //  //   }
+ //  //   return "User succesfully updated!";
+ //  // }
 
-  // Private fields
+ //  // Private fields
 
   
 }

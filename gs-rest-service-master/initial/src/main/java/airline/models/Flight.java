@@ -1,32 +1,50 @@
-package models;
+package airline.models;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.sql.DataSource;
 
 import java.util.*;
+
 @Entity
 @Table(name = "Flight")
 public class Flight {
     
     @Id
+    @Column(name = "number")
+    private String number;
+
+   @Column(name = "price")
     private int price;   
 
-    private String number;
+    @Column(name = "from")
     private String from;
+
+    @Column(name = "seatsLeft")
     private int seatsLeft;
+
+    @Column(name = "to")
     private String to;
+
+    @Column(name = "departureTime")
     private Date departureTime;
+
+    @Column(name = "arrivalTime")
     private Date arrivalTime;
+
+    @Column(name = "description")
     private String description;
-    private Plane plane;
+
+    private int plane_id;
+
     private List<Passenger> passengers;
 
-     public Flight(String number,String from,int price,String to,int seatsLeft,Date departureTime,Date arrivalTime,String description,Plane plane,List<Passenger> passengers) {
+     public Flight(String number,String from,int price,String to,int seatsLeft,Date departureTime,Date arrivalTime,String description,int plane_id,List<Passenger> passengers) {
         this.number = number;
         this.from = from;
         this.to = to;
@@ -35,9 +53,12 @@ public class Flight {
         this.departureTime = departureTime;
         this.arrivalTime=arrivalTime;
         this.description=description;
-        this.plane=plane;
+        this.plane_id=plane_id;
         this.passengers=passengers;
 
+    }
+    public Flight(){
+        
     }
 
 //getter methods
@@ -72,8 +93,8 @@ public class Flight {
     public String getDescription() {
         return description;
     }
-    public Plane getPlane() {
-        return plane;
+    public int getPlane() {
+        return plane_id;
     }
     public List<Passenger> getPassengers() {
         return passengers;
@@ -112,7 +133,7 @@ public class Flight {
         this.description=description;
     }
     public void setPlane() {
-        this.plane=plane;
+        this.plane_id=plane_id;
     }
     public void setPassengers() {
         this.passengers=passengers;

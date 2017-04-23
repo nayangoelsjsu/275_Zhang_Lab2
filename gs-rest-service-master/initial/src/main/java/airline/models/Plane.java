@@ -1,31 +1,44 @@
-package models;
+package airline.models;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.sql.DataSource;
 
 
 @Entity
-//@Table(name = "Reservation")
+@Table(name = "Plane")
 public class Plane {
-    
-    // @Id
 
+    @Id
+    @Column(name="id")
+    private int id;
+
+    @Column(name="model")
     private String model;
-    private String manufacturer;
-    private int capacity;
-    private int yearOfManufacturer;
 
-     public Plane(String model,String manufacturer,int capacity,int yearOfManufacturer) {
+    @Column(name="manufacturer")
+    private String manufacturer;
+
+    @Column(name="capacity")
+    private int capacity;
+
+    @Column(name="yearOfManufacture")
+    private int yearOfManufacture;
+
+     public Plane(String model,String manufacturer,int capacity,int yearOfManufacture) {
         this.model = model;
         this.manufacturer = manufacturer;
         this.capacity = capacity;
-        this.yearOfManufacturer = yearOfManufacturer;
+        this.yearOfManufacture = yearOfManufacture;
 
+    }
+    public Plane(){
+        
     }
 
 //getter methods
@@ -42,8 +55,8 @@ public class Plane {
         return capacity;
     }
 
-    public int getYearOfManufacturer() {
-        return yearOfManufacturer;
+    public int getYearOfManufacture() {
+        return yearOfManufacture;
     }
 
     
@@ -63,8 +76,8 @@ public class Plane {
       this.capacity = capacity;
     }
 
-    public void setYearOfManufacturer() {
-        this.yearOfManufacturer = yearOfManufacturer;
+    public void setYearOfManufacture() {
+        this.yearOfManufacture = yearOfManufacture;
     }
 
    

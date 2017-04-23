@@ -1,11 +1,14 @@
-package models;
-import models.Flight;
+package airline.models;
+
+import airline.models.Flight;
 import java.util.*;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.sql.DataSource;
 
@@ -16,36 +19,54 @@ public class Reservation {
     
     // @Id
     // private int id;   
-@Id
+    @Id
+    @Column(name="id")
+    private int id;
+
+    @Column(name="orderNumber")
     private String orderNumber;
-    private Passenger passenger;
+
+    @Column(name="passenger_id")
+    private String passenger_id;
+
+    @Column(name="price")
     private int price;
-    private List<Flight> flights;
 
-     public Reservation(String orderNumber,Passenger passenger,int price,List<Flight> flights) {
+    @Column(name="flight_id")
+    private String flight_id;
+
+     public Reservation(int id,String orderNumber,String passenger_id,int price,String flight_id) {
+        this.id=id;
         this.orderNumber = orderNumber;
-        this.passenger = passenger;
+        this.passenger_id = passenger_id;
         this.price = price;
-        this.flights = flights;
+        this.flight_id = flight_id;
 
+    }
+    public Reservation(){
+        
     }
 
 //getter methods
+
+    public int getId() {
+        return id;
+    }
 
     public String getOrderNumber() {
         return orderNumber;
     }
 
-    public Passenger getPassenger() {
-        return passenger;
+    public String getPassenger_id() {
+        return passenger_id;
     }
 
     public int getPrice() {
         return price;
     }
 
-    public List<Flight> getFlights() {
-        return flights;
+    public String getFlight_id() {
+        return flight_id;
     }
 
     
@@ -53,20 +74,24 @@ public class Reservation {
 
 //setter methods
 
+    public void setId() {
+        this.id=id;
+    }
+
     public void setOrderNumber() {
         this.orderNumber=orderNumber;
     }
 
-    public void setPassenger() {
-        this.passenger=passenger;
+    public void setPassenger_id() {
+        this.passenger_id=passenger_id;
     }
 
     public void setPrice() {
         this.price=price;
     }
 
-    public void setFlights() {
-        this.flights=flights;
+    public void setFlight_id() {
+        this.flight_id=flight_id;
     }
 
    
