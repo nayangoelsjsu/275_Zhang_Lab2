@@ -1,9 +1,10 @@
 package controllers;
-
+import java.util.*;
+import models.Reservation;
 import models.Passenger;
-import dao.PassengerDao;
+import dao.ReservationDao;
 import javax.sql.DataSource;
-
+import models.Flight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,23 +25,24 @@ public class ReservationController {
   @ResponseBody
   @RequestMapping("{orderNumber}")
   public String getById(@PathVariable("orderNumber") String orderNumber) {
-    String orderNumber="";
+    String orderNum="";
     int price;
     Passenger passenger;
-    List<Flights> flights;
+    List<Flight> flight;
     
 
     try {
-      Reservation reservation=reservationDao.findById(orderNumber);
-      orderNumber = reservation.getOrderNumber();
+      //int o=Integer.parseInt(orderNum);
+      Reservation reservation=reservationDao.findById(orderNum);
+      orderNum = reservation.getOrderNumber();
       price = reservation.getPrice();
       passenger = reservation.getPassenger();
-      flights = reservation.getFlights();
+      flight = reservation.getFlights();
     }
     catch (Exception ex) {
       return "Reservation not found";
     }
-    return "The order number is: " + orderNumber;
+    return "The order number is: " + orderNum;
   }
 
 

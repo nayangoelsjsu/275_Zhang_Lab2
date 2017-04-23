@@ -1,5 +1,6 @@
 package models;
-
+import models.Flight;
+import java.util.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -53,11 +54,11 @@ public class Reservation {
 //setter methods
 
     public void setOrderNumber() {
-        this.id=id;
+        this.orderNumber=orderNumber;
     }
 
     public void setPassenger() {
-        this.firstname=firstname;
+        this.passenger=passenger;
     }
 
     public void setPrice() {

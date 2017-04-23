@@ -1,8 +1,11 @@
 package controllers;
 
+import models.Flight;
+import models.Plane;
 import models.Passenger;
-import dao.PassengerDao;
+import dao.FlightDao;
 import javax.sql.DataSource;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,26 +27,25 @@ public class FlightController {
   @ResponseBody
   @RequestMapping("{number}")
   public String getById(@PathVariable("number") String number) {
-    private int price;   
-
-    private String number="";
-    private String from="";
-    private int seatsLeft;
-    private String to="";
-    private Date departureTime;
-    private Date arrivalTime;
-    private String description="";
-    private Plane plane;
-    private List<Passenger> passengers;
+     int price;   
+     String num="";
+     String from="";
+     int seatsLeft;
+     String to="";
+     Date departureTime;
+     Date arrivalTime;
+     String description="";
+     Plane plane;
+     List<Passenger> passengers;
     
 
     try {
-      Flight flight=flightDao.findById(number);
-      number = flight.getNumber();
+      Flight flight=flightDao.findById(num);
+      num = flight.getNumber();
       price = flight.getPrice();
       passengers = flight.getPassengers();
       from = flight.getFrom();
-      seatsLeft=flight.getseatsLeft();
+      seatsLeft=flight.getSeatsLeft();
       to=flight.getTo();
       departureTime=flight.getDepartureTime();
       arrivalTime=flight.getArrivalTime();
@@ -54,7 +56,7 @@ public class FlightController {
     catch (Exception ex) {
       return "Flight not found";
     }
-    return "The flight number is: " + number;
+    return "The flight number is: " + num;
   }
 
 

@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.sql.DataSource;
 
-
+import java.util.*;
 @Entity
 @Table(name = "Flight")
 public class Flight {
