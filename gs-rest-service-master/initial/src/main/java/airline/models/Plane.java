@@ -30,7 +30,8 @@ public class Plane {
     @Column(name="yearOfManufacture")
     private int yearOfManufacture;
 
-     public Plane(String model,String manufacturer,int capacity,int yearOfManufacture) {
+     public Plane(String model,String manufacturer,int capacity,int yearOfManufacture,int id) {
+        this.id=id;
         this.model = model;
         this.manufacturer = manufacturer;
         this.capacity = capacity;
@@ -59,6 +60,10 @@ public class Plane {
         return yearOfManufacture;
     }
 
+    public int getId() {
+        return id;
+    }
+
     
 
 
@@ -78,6 +83,10 @@ public class Plane {
 
     public void setYearOfManufacture() {
         this.yearOfManufacture = yearOfManufacture;
+    }
+
+     public void setId() {
+       this.id = id;
     }
 
    

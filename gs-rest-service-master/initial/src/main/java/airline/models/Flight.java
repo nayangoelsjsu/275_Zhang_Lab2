@@ -48,8 +48,8 @@ public class Flight {
 
     // private List<Passenger> passengers;
 
-     public Flight(int id, String number,String from,int price,String to,int seatsLeft,Date departureTime,Date arrivalTime,String description,int plane_id) {
-        this.id=id;
+     public Flight(String number,String from,int price,String to,int seatsLeft,Date departureTime,Date arrivalTime,String description,int plane_id) {
+    
         this.number = number;
         this.from = from;
         this.to = to;

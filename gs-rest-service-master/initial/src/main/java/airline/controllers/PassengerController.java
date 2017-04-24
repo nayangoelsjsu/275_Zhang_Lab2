@@ -90,10 +90,9 @@ public Passenger create(@RequestParam Map<String,String> requestParams){
    String gender=requestParams.get("gender");
    String phone=requestParams.get("phone");
    int id=randomIdgen();
-   Passenger passenger;
 
 try{
-      passenger = new Passenger(id,firstname, lastname, age, gender, phone);
+      Passenger passenger = new Passenger(id,firstname, lastname, age, gender, phone);
       passengerDao.save(passenger);
     
       // passengerId = String.valueOf(passenger.getId());
@@ -103,7 +102,8 @@ try{
 
     }
       //return new Passenger(id,firstname,lastname,age,gender,phone);
-    return passenger;
+    Passenger pass= passengerDao.findById(id);
+    return pass;
 }
   
   /**

@@ -1,9 +1,14 @@
 package airline.controllers;
 
+import java.util.*;
+import java.text.*;
+
 import airline.models.Flight;
 import airline.models.Plane;
 import airline.models.Passenger;
 import airline.dao.FlightDao;
+import airline.dao.PlaneDao;
+
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.base.Strings;
 
 
-import java.util.*;
 
 
 @RequestMapping("/flight")
@@ -30,9 +34,24 @@ public class FlightController {
 
 @Autowired
   private FlightDao flightDao;
-  
+
+  @Autowired
+  private PlaneDao planeDao;
+
+
+
+  //random
+
+  // public int randomIdgen(){
+
+  //   Random rand = new Random();
+  //   int  n = rand.nextInt(59900) + 100;
+  //   return n;
+
+  // }
+
   @ResponseBody
-  @RequestMapping("{number}")
+  @RequestMapping(value="{number}",method=RequestMethod.GET)
   public String getById(@PathVariable("number") String number) {
      int price;   
      String num="";
@@ -67,77 +86,81 @@ public class FlightController {
   }
 
 
-// @RequestMapping(method = RequestMethod.POST)   
-// public String create(@RequestParam Map<String,String> requestParams){
+@RequestMapping(method=RequestMethod.POST)   
+public String create(@RequestParam Map<String,String> requestParams){
 
-//    String number=requestParams.get("number");
-//    String from=requestParams.get("from");
-//    String to=requestParams.get("to");
-//    String sprice=requestParams.get("price");
-//    int price= Integer.parseInt(sprice);
-//    String sseatsLeft=requestParams.get("seatsLeft");
-//    int seatsLeft= Integer.parseInt(sseatsLeft);
-//    String sdepartureTime=requestParams.get("departureTime");
-//    Date departureTime=new SimpleDateFormat("yyyy-mm-dd-hh").parse(sdepartureTime);
-//    String sarrivalTime=requestParams.get("arrivalTime");
-//    Date arrivalTime=new SimpleDateFormat("yyyy-mm-dd-hh").parse(sarrivalTime);
+   String number=requestParams.get("number");
+   String from=requestParams.get("from");
+   String to=requestParams.get("to");
+   String sprice=requestParams.get("price");
+   int price= Integer.parseInt(sprice);
+   String description= requestParams.get("description");
 
 
-//    //Plane
-//    Plane plane;
-//    String model=requestParams.get("model");
-//    String manufacturer=requestParams.get("manufacturer");
-//    String scapacity=requestParams.get("capacity");
-//    int capacity= Integer.parseInt(scapacity);
-//    String syearOfManufacturer=requestParams.get("yearOfManufacturer");
-//    int yearOfManufacturer= Integer.parseInt(syearOfManufacturer);
-//    plane.model=model;
-//    plane.manufacturer=manufacturer;
-//    plane.capacity=capacity;
-//    plane.yearOfManufacturer=yearOfManufacturer;
-//    //String phone=requestParams.get("phone");
-//    //int id=2;
+//plane
 
-// try{
-//    Flight flight = new Flight(number,from, price, to, seatsLeft, departureTime,arrivalTime,description,plane,passengers);
-//       flightDao.save(flight);
+   String model=requestParams.get("model");
+   String manufacturer=requestParams.get("manufacturer");
+   String scapacity=requestParams.get("capacity");
+   int capacity= Integer.parseInt(scapacity);
+   String syearOfManufacturer=requestParams.get("yearOfManufacture");
+   int yearOfManufacturer= Integer.parseInt(syearOfManufacturer);
+    // int planeid= randomIdgen();
+   
+   //String phone=requestParams.get("phone");
+   //int id=2;
+
+try{
+
+
+      String sdepartureTime=requestParams.get("departureTime");
+   Date departureTime=new SimpleDateFormat("yyyy-mm-dd-hh").parse(sdepartureTime);
+   String sarrivalTime=requestParams.get("arrivalTime");
+   Date arrivalTime=new SimpleDateFormat("yyyy-mm-dd-hh").parse(sarrivalTime);
+
+      Plane plane= new Plane(model,manufacturer,capacity,yearOfManufacturer,1);
+      planeDao.save(plane);
+
+      Flight flight = new Flight(number,from, price, to, 100, departureTime,arrivalTime,description,1);
+      flightDao.save(flight);
+
     
-//       // passengerId = String.valueOf(passenger.getId());
-// }
-//   catch (Exception ex) {
-//       return "Error creating the Flight: " + ex.toString();
-//     }
-//       //return new Passenger(id,firstname,lastname,age,gender,phone);
-//     return "Flight succesfully created with number = " + number;
-// }
+      // passengerId = String.valueOf(passenger.getId());
+}
+  catch (Exception ex) {
+      return "Error creating the Flight: " + ex.toString();
+    }
+      //return new Passenger(id,firstname,lastname,age,gender,phone);
+    return "Flight succesfully created with number = " + number;
+}
 
-//  @RequestMapping(value="{number}",method = RequestMethod.DELETE)
-//   @ResponseBody
-//   public String delete(@PathVariable("number") String number) {
-//     try {
-//       Flight flight = flightDao.findById(number);
-//       flightDao.delete(flight);
-//     }
-//     catch (Exception ex) {
-//       return "Error deleting the flight:" + ex.toString();
-//     }
-//     return "Flight succesfully deleted!";
-//   }
+ // @RequestMapping(value="{number}",method = RequestMethod.DELETE)
+ //  @ResponseBody
+ //  public String delete(@PathVariable("number") String number) {
+ //    try {
+ //      Flight flight = FlightDao.findBynumber(number);
+ //      FlightDao.delete(flight);
+ //    }
+ //    catch (Exception ex) {
+ //      return "Error deleting the flight:" + ex.toString();
+ //    }
+ //    return "Flight succesfully deleted!";
+ //  }
 
-//   // @RequestMapping("/create",method=POST)
-//   // @ResponseBody
-//   // public String create(String firstname, String lastname, int age, String gender, String phone) {
-//   //   String userId = "";
-//   //   try {
-//   //     Passenger passenger = new Passenger(firstname, lastname, age, gender, phone);
-//   //     passengerDao.save(user);
-//   //     passengerId = String.valueOf(passenger.getId());
-//   //   }
-//   //   catch (Exception ex) {
-//   //     return "Error creating the passenger: " + ex.toString();
-//   //   }
-//   //   return "Passenger succesfully created with id = " + passengerId;
-//   // }
+  // @RequestMapping("/create",method=POST)
+  // @ResponseBody
+  // public String create(String firstname, String lastname, int age, String gender, String phone) {
+  //   String userId = "";
+  //   try {
+  //     Passenger passenger = new Passenger(firstname, lastname, age, gender, phone);
+  //     passengerDao.save(user);
+  //     passengerId = String.valueOf(passenger.getId());
+  //   }
+  //   catch (Exception ex) {
+  //     return "Error creating the passenger: " + ex.toString();
+  //   }
+  //   return "Passenger succesfully created with id = " + passengerId;
+  // }
   
 //   // /**
 //   //  * GET /delete  --> Delete the user having the passed id.
