@@ -134,18 +134,18 @@ try{
     return "Flight succesfully created with number = " + number;
 }
 
- // @RequestMapping(value="{number}",method = RequestMethod.DELETE)
- //  @ResponseBody
- //  public String delete(@PathVariable("number") String number) {
- //    try {
- //      Flight flight = FlightDao.findBynumber(number);
- //      FlightDao.delete(flight);
- //    }
- //    catch (Exception ex) {
- //      return "Error deleting the flight:" + ex.toString();
- //    }
- //    return "Flight succesfully deleted!";
- //  }
+ @RequestMapping(value="{number}",method = RequestMethod.DELETE)
+  @ResponseBody
+  public String delete(@PathVariable("number") String number) {
+    try {
+      Flight flight = flightDao.findBynumber(number);
+      flightDao.delete(flight);
+    }
+    catch (Exception ex) {
+      return "Error deleting the flight:" + ex.toString();
+    }
+    return "Flight succesfully deleted!";
+  }
 
   // @RequestMapping("/create",method=POST)
   // @ResponseBody
