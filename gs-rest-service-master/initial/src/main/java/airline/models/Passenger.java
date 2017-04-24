@@ -93,35 +93,35 @@ public class Passenger {
 
 //setter methods
 
-    public void setId() {
+    public void setId(int id) {
         this.id=id;
     }
 
-    public void setfirstname() {
+    public void setfirstname(String firstname) {
         this.firstname=firstname;
     }
 
-    public void setlastname() {
+    public void setlastname(String lastname) {
         this.lastname=lastname;
     }
 
-    public void setage() {
+    public void setage(int age) {
         this.age=age;
     }
 
-    public void setgender() {
+    public void setgender(String gender) {
         this.gender=gender;
     }
 
-    public void setphone() {
+    public void setphone(String phone) {
         this.phone=phone;
     }
 
-    public void setcode() {
+    public void setcode(int code) {
         this.code=code;
     }
 
-    public void setmsg() {
+    public void setmsg(String msg) {
         this.msg=msg;
     }
 

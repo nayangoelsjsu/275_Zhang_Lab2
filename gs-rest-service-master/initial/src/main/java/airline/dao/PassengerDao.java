@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import airline.models.Passenger;
 
 @Transactional
-public interface PassengerDao extends CrudRepository<Passenger, Long> {
+public interface PassengerDao extends CrudRepository<Passenger, Integer> {
 
   public Passenger findById(int id);
 

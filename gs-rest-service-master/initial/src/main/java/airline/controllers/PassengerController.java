@@ -122,29 +122,32 @@ try{
     }
       return new Passenger(200,"The requested passenger with id"+id+" deleted successfully");
   }
-  
-  
-  
-  // /**
-  //  * GET /update  --> Update the email and the name for the user in the 
-  //  * database having the passed id.
-  //  */
 
 
-  // @RequestMapping("/update")
-  // @ResponseBody
-  // public String updateUser(long id, String email, String name) {
-  //   try {
-  //     User user = passengerDao.findOne(id);
-  //     user.setEmail(email);
-  //     user.setName(name);
-  //     passengerDao.save(user);
-  //   }
-  //   catch (Exception ex) {
-  //     return "Error updating the user: " + ex.toString();
-  //   }
-  //   return "User succesfully updated!";
-  // }
+  @RequestMapping(value="{id}",method = RequestMethod.PUT)
+  @ResponseBody
+  public String updateUser(@RequestParam Map<String,String> requestParams, @PathVariable("id") int id) {
+    try {
+
+      String firstname=requestParams.get("firstname");
+      String lastname=requestParams.get("lastname");
+      String sage=requestParams.get("age");
+      int age= Integer.parseInt(sage);
+      String gender=requestParams.get("gender");
+      String phone=requestParams.get("phone");
+
+      Passenger user = passengerDao.findOne(id);
+      user.setlastname(lastname);
+      user.setage(age);
+      user.setgender(gender);
+      user.setphone(phone);
+      passengerDao.save(user);
+    }
+    catch (Exception ex) {
+      return "Error updating the user: " + ex.toString();
+    }
+    return "User succesfully updated!";
+  }
 
   // Private fields
 
