@@ -10,10 +10,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.google.common.base.Strings;
 
 @RequestMapping("/reservation")
 @Controller
@@ -61,22 +65,34 @@ public class ReservationController {
   //   return "Passenger succesfully created with id = " + passengerId;
   // }
   
-  // /**
-  //  * GET /delete  --> Delete the user having the passed id.
-  //  */
 
- // @RequestMapping(value="{orderNumber}",method = RequestMethod.DELETE)
+ // @RequestMapping(value="{id}",method = RequestMethod.DELETE)
  //  @ResponseBody
- //  public String delete(@PathVariable("orderNumber") String orderNumber) {
+ //  public Passenger delete(@PathVariable("id") int id) {
  //    try {
- //      Reservation reservation = resrvationDao.findById(orderNumber);
- //      reservationDao.delete(reservation);
+ //      Passenger passenger = passengerDao.findById(id);
+ //      passengerDao.delete(passenger);
  //    }
  //    catch (Exception ex) {
- //      return "Error deleting the reservation:" + ex.toString();
+ //      return new Passenger(404,"Sorry, the requested passenger with id"+id+" does not exist");
  //    }
- //    return "Reservation succesfully deleted!";
+ //      return new Passenger(200,"The requested passenger with id"+id+" deleted successfully");
  //  }
+
+
+ @RequestMapping(value="{orderNumber}",method = RequestMethod.DELETE)
+  @ResponseBody
+  public String delete(@PathVariable("orderNumber") String orderNumber) {
+    try {
+      Reservation reservation = reservationDao.findByorderNumber(orderNumber);
+      System.out.println(reservation.getFlight_id());
+      reservationDao.deleteByorderNumber(orderNumber);
+    }
+    catch (Exception ex) {
+      return "Error deleting the reservation:" + ex.toString();
+    }
+    return "Reservation succesfully deleted!";
+  }
   
   
   

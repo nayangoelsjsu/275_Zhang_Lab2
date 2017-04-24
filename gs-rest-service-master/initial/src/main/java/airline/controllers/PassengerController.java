@@ -126,15 +126,23 @@ try{
 
   @RequestMapping(value="{id}",method = RequestMethod.PUT)
   @ResponseBody
-  public String updateUser(@RequestParam Map<String,String> requestParams, @PathVariable("id") int id) {
+  public Passenger updateUser(@RequestParam Map<String,String> requestParams, @PathVariable("id") int id) {
+    String firstname="";
+    String lastname="";
+    int age;
+    String gender="";
+    String phone="";
+    String sage="";
+    
+
     try {
 
-      String firstname=requestParams.get("firstname");
-      String lastname=requestParams.get("lastname");
-      String sage=requestParams.get("age");
-      int age= Integer.parseInt(sage);
-      String gender=requestParams.get("gender");
-      String phone=requestParams.get("phone");
+       firstname=requestParams.get("firstname");
+       lastname=requestParams.get("lastname");
+       sage=requestParams.get("age");
+       age= Integer.parseInt(sage);
+       gender=requestParams.get("gender");
+       phone=requestParams.get("phone");
 
       Passenger user = passengerDao.findOne(id);
       user.setlastname(lastname);
@@ -144,9 +152,11 @@ try{
       passengerDao.save(user);
     }
     catch (Exception ex) {
-      return "Error updating the user: " + ex.toString();
+      //return "Error updating the user: " + ex.toString();
+      return new Passenger(404,"xxx");
     }
-    return "User succesfully updated!";
+    //return "User succesfully updated!";
+    return new Passenger(id,firstname, lastname, age, gender, phone);
   }
 
   // Private fields

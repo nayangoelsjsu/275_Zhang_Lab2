@@ -74,23 +74,23 @@ public class Reservation {
 
 //setter methods
 
-    public void setId() {
+    public void setId(int id) {
         this.id=id;
     }
 
-    public void setOrderNumber() {
+    public void setOrderNumber(String orderNumber) {
         this.orderNumber=orderNumber;
     }
 
-    public void setPassenger_id() {
+    public void setPassenger_id(String passenger_id) {
         this.passenger_id=passenger_id;
     }
 
-    public void setPrice() {
+    public void setPrice(int price) {
         this.price=price;
     }
 
-    public void setFlight_id() {
+    public void setFlight_id(String flight_id) {
         this.flight_id=flight_id;
     }
 
