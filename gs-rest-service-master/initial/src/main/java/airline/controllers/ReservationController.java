@@ -33,7 +33,7 @@ public class ReservationController {
 
     try {
       //int o=Integer.parseInt(orderNum);
-      Reservation reservation=reservationDao.findByorderNumber(orderNum);
+      Reservation reservation=reservationDao.findByorderNumber(orderNumber);
       orderNum = reservation.getOrderNumber();
       price = reservation.getPrice();
       passenger = reservation.getPassenger_id();

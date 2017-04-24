@@ -16,19 +16,22 @@ import java.util.*;
 public class Flight {
     
     @Id
+    @Column(name= "id")
+    private int id;
+
     @Column(name = "number")
     private String number;
 
    @Column(name = "price")
     private int price;   
 
-    @Column(name = "from")
+    @Column(name = "source")
     private String from;
 
     @Column(name = "seatsLeft")
     private int seatsLeft;
 
-    @Column(name = "to")
+    @Column(name = "destination")
     private String to;
 
     @Column(name = "departureTime")
@@ -40,11 +43,13 @@ public class Flight {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "plane_id")
     private int plane_id;
 
-    private List<Passenger> passengers;
+    // private List<Passenger> passengers;
 
-     public Flight(String number,String from,int price,String to,int seatsLeft,Date departureTime,Date arrivalTime,String description,int plane_id,List<Passenger> passengers) {
+     public Flight(int id, String number,String from,int price,String to,int seatsLeft,Date departureTime,Date arrivalTime,String description,int plane_id) {
+        this.id=id;
         this.number = number;
         this.from = from;
         this.to = to;
@@ -54,7 +59,7 @@ public class Flight {
         this.arrivalTime=arrivalTime;
         this.description=description;
         this.plane_id=plane_id;
-        this.passengers=passengers;
+        // this.passengers=passengers;
 
     }
     public Flight(){
@@ -63,7 +68,11 @@ public class Flight {
 
 //getter methods
 
-    public String getNumber() {
+    public int getid() {
+        return id;
+    }
+
+     public String getNumber() {
         return number;
     }
 
@@ -96,11 +105,15 @@ public class Flight {
     public int getPlane() {
         return plane_id;
     }
-    public List<Passenger> getPassengers() {
-        return passengers;
-    }
+    // public List<Passenger> getPassengers() {
+    //     return passengers;
+    // }
 
 //setter methods
+
+    public void id() {
+        this.id=id;
+    }
 
    public void setNumber() {
         this.number=number;
@@ -135,7 +148,7 @@ public class Flight {
     public void setPlane() {
         this.plane_id=plane_id;
     }
-    public void setPassengers() {
-        this.passengers=passengers;
-    }
+    // public void setPassengers() {
+    //     this.passengers=passengers;
+    // }
 }

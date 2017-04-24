@@ -43,14 +43,14 @@ public class FlightController {
      Date arrivalTime;
      String description="";
      int plane_id;
-     List<Passenger> passengers;
+     // List<Passenger> passengers;
     
 
     try {
-      Flight flight=flightDao.findById(num);
+      Flight flight=flightDao.findBynumber(number);
       num = flight.getNumber();
       price = flight.getPrice();
-      passengers = flight.getPassengers();
+      // passengers = flight.getPassengers();
       from = flight.getFrom();
       seatsLeft=flight.getSeatsLeft();
       to=flight.getTo();

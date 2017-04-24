@@ -11,6 +11,6 @@ import airline.models.Flight;
 @Transactional
 public interface FlightDao extends CrudRepository<Flight, Long> {
 
-  public Flight findById(String number);
+  public Flight findBynumber(String number);
 
 }
