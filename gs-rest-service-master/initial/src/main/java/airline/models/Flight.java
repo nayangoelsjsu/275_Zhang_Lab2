@@ -15,9 +15,9 @@ import java.util.*;
 @Table(name = "Flight")
 public class Flight {
     
-    @Id
-    @Column(name= "id")
-    private int id;
+     @Id
+    // @Column(name= "id")
+    // private int id;
 
     @Column(name = "number")
     private String number;
@@ -35,10 +35,10 @@ public class Flight {
     private String to;
 
     @Column(name = "departureTime")
-    private Date departureTime;
+    private String departureTime;
 
     @Column(name = "arrivalTime")
-    private Date arrivalTime;
+    private String arrivalTime;
 
     @Column(name = "description")
     private String description;
@@ -48,7 +48,7 @@ public class Flight {
 
     // private List<Passenger> passengers;
 
-     public Flight(String number,String from,int price,String to,int seatsLeft,Date departureTime,Date arrivalTime,String description,int plane_id) {
+     public Flight(String number,String from,int price,String to,int seatsLeft,String departureTime,String arrivalTime,String description,int plane_id) {
     
         this.number = number;
         this.from = from;
@@ -68,9 +68,9 @@ public class Flight {
 
 //getter methods
 
-    public int getid() {
-        return id;
-    }
+    // public int getid() {
+    //     return id;
+    // }
 
      public String getNumber() {
         return number;
@@ -92,10 +92,10 @@ public class Flight {
         return price;
     }
 
-    public Date getDepartureTime() {
+    public String getDepartureTime() {
         return departureTime;
     }
-    public Date getArrivalTime() {
+    public String getArrivalTime() {
         return arrivalTime;
     }
 
@@ -111,9 +111,9 @@ public class Flight {
 
 //setter methods
 
-    public void id() {
-        this.id=id;
-    }
+    // public void id() {
+    //     this.id=id;
+    // }
 
    public void setNumber() {
         this.number=number;

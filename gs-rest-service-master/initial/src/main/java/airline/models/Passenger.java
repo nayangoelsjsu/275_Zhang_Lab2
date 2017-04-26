@@ -33,14 +33,14 @@ public class Passenger {
     @Column(name = "phone")
     private String phone;
 
-    private int code;
-    private String msg;
+    // private int code;
+    // private String msg;
 
-    public Passenger(int code, String msg){
-        System.out.println("main yahan hoon");
-        this.code=code;
-        this.msg=msg;
-    }
+    // public Passenger(int code, String msg){
+    //     System.out.println("main yahan hoon");
+    //     this.code=code;
+    //     this.msg=msg;
+    // }
 
     public Passenger(){
 
@@ -82,13 +82,13 @@ public class Passenger {
         return phone;
     }
 
-     public int getcode() {
-        return code;
-    }
+    //  public int getcode() {
+    //     return code;
+    // }
 
-     public String getmsg() {
-        return msg;
-    }
+    //  public String getmsg() {
+    //     return msg;
+    // }
 
 
 //setter methods
@@ -117,12 +117,12 @@ public class Passenger {
         this.phone=phone;
     }
 
-    public void setcode(int code) {
-        this.code=code;
-    }
+    // public void setcode(int code) {
+    //     this.code=code;
+    // }
 
-    public void setmsg(String msg) {
-        this.msg=msg;
-    }
+    // public void setmsg(String msg) {
+    //     this.msg=msg;
+    // }
 
 }

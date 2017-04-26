@@ -14,9 +14,12 @@ import airline.dao.PlaneDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -51,39 +54,60 @@ public class FlightController {
   // }
 
   @ResponseBody
-  @RequestMapping(value="{number}",method=RequestMethod.GET)
-  public String getById(@PathVariable("number") String number) {
-     int price;   
-     String num="";
-     String from="";
-     int seatsLeft;
-     String to="";
-     Date departureTime;
-     Date arrivalTime;
-     String description="";
-     int plane_id;
-     // List<Passenger> passengers;
+  // @RequestMapping(value="{number}",method=RequestMethod.GET)
+  // public String getById(@PathVariable("number") String number) {
+  //    int price;   
+  //    String num="";
+  //    String from="";
+  //    int seatsLeft;
+  //    String to="";
+  //    Date departureTime;
+  //    Date arrivalTime;
+  //    String description="";
+  //    int plane_id;
+  //    // List<Passenger> passengers;
     
 
-    try {
-      Flight flight=flightDao.findBynumber(number);
-      num = flight.getNumber();
-      price = flight.getPrice();
-      // passengers = flight.getPassengers();
-      from = flight.getFrom();
-      seatsLeft=flight.getSeatsLeft();
-      to=flight.getTo();
-      departureTime=flight.getDepartureTime();
-      arrivalTime=flight.getArrivalTime();
-      description=flight.getDescription();
-      plane_id=flight.getPlane();
+  //   try {
+  //     Flight flight=flightDao.findBynumber(number);
+  //     num = flight.getNumber();
+  //     price = flight.getPrice();
+  //     // passengers = flight.getPassengers();
+  //     from = flight.getFrom();
+  //     seatsLeft=flight.getSeatsLeft();
+  //     to=flight.getTo();
+  //     departureTime=flight.getDepartureTime();
+  //     arrivalTime=flight.getArrivalTime();
+  //     description=flight.getDescription();
+  //     plane_id=flight.getPlane();
 
-    }
-    catch (Exception ex) {
-      return "Flight not found";
-    }
-    return "The flight number is: " + num;
-  }
+  //   }
+  //   catch (Exception ex) {
+  //     return "Flight not found";
+  //   }
+  //   return "The flight number is: " + num;
+  // }
+
+
+
+
+@RequestMapping(value="{number}", 
+            params="json",
+            produces=MediaType.APPLICATION_JSON_VALUE,method=RequestMethod.GET)
+public ResponseEntity<Flight> getFlight(@PathVariable String number,@RequestParam boolean json){
+    Flight flight = flightDao.findBynumber(number);
+    return ResponseEntity.ok(flight);
+} 
+@RequestMapping(value="{number}", 
+            params="xml",
+            produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.GET)
+public ResponseEntity<Flight> getFlightXML(@PathVariable String number,@RequestParam boolean xml){
+    Flight flight = flightDao.findBynumber(number);
+    return ResponseEntity.ok(flight);
+}
+
+
+
 
 
 @RequestMapping(method=RequestMethod.POST)   
@@ -113,10 +137,10 @@ public String create(@RequestParam Map<String,String> requestParams){
 try{
 
 
-      String sdepartureTime=requestParams.get("departureTime");
-   Date departureTime=new SimpleDateFormat("yyyy-mm-dd-hh").parse(sdepartureTime);
-   String sarrivalTime=requestParams.get("arrivalTime");
-   Date arrivalTime=new SimpleDateFormat("yyyy-mm-dd-hh").parse(sarrivalTime);
+      String departureTime=requestParams.get("departureTime");
+  // Date departureTime=new SimpleDateFormat("yyyy-mm-dd-hh").parse(sdepartureTime);
+   String arrivalTime=requestParams.get("arrivalTime");
+   //Date arrivalTime=new SimpleDateFormat("yyyy-mm-dd-hh").parse(sarrivalTime);
 
       Plane plane= new Plane(model,manufacturer,capacity,yearOfManufacturer,1);
       planeDao.save(plane);
