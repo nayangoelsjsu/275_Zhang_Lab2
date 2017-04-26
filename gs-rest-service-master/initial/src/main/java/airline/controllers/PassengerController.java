@@ -124,14 +124,14 @@ public class PassengerController {
 @RequestMapping(value="/passenger/{id}", 
             params="json",
             produces=MediaType.APPLICATION_JSON_VALUE,method=RequestMethod.GET)
-public ResponseEntity<Passenger> getPassenger(@PathVariable Integer id,@RequestParam boolean json){
+public ResponseEntity<Passenger> getPassenger(@PathVariable String id,@RequestParam boolean json){
     Passenger passenger = passengerDao.findById(id);
     return ResponseEntity.ok(passenger);
 } 
 @RequestMapping(value="/passenger/{id}", 
             params="xml",
             produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.GET)
-public ResponseEntity<Passenger> getPassengerXML(@PathVariable Integer id,@RequestParam boolean xml){
+public ResponseEntity<Passenger> getPassengerXML(@PathVariable String id,@RequestParam boolean xml){
     Passenger passenger = passengerDao.findById(id);
     return ResponseEntity.ok(passenger);
 }
@@ -146,9 +146,10 @@ public Passenger create(@RequestParam Map<String,String> requestParams){
    String gender=requestParams.get("gender");
    String phone=requestParams.get("phone");
    int id=randomIdgen();
+   String sid=Integer.toString(id);
 
 try{
-      Passenger passenger = new Passenger(id,firstname, lastname, age, gender, phone);
+      Passenger passenger = new Passenger(sid,firstname, lastname, age, gender, phone);
       passengerDao.save(passenger);
     
       // passengerId = String.valueOf(passenger.getId());
@@ -158,7 +159,7 @@ try{
 
     }
       //return new Passenger(id,firstname,lastname,age,gender,phone);
-    Passenger pass= passengerDao.findById(id);
+    Passenger pass= passengerDao.findById(sid);
     return pass;
 }
   
@@ -166,7 +167,7 @@ try{
    * DELETE /delete  --> Delete the user having the passed id.
    */
 
-  // @RequestMapping(value="{id}",method = RequestMethod.DELETE)
+  // @RequestMapping(value="/passenger/{id}",method = RequestMethod.DELETE)
   // @ResponseBody
   // public Passenger delete(@PathVariable("id") int id) {
   //   try {
@@ -180,9 +181,9 @@ try{
   // }
 
 
-  @RequestMapping(value="{id}",method = RequestMethod.PUT)
+  @RequestMapping(value="/passenger/{id}",method = RequestMethod.PUT)
   @ResponseBody
-  public Passenger updateUser(@RequestParam Map<String,String> requestParams, @PathVariable("id") int id) {
+  public Passenger updateUser(@RequestParam Map<String,String> requestParams, @PathVariable("id") String id) {
     String firstname="";
     String lastname="";
     int age=0;;
@@ -200,7 +201,7 @@ try{
        gender=requestParams.get("gender");
        phone=requestParams.get("phone");
 
-      Passenger user = passengerDao.findOne(id);
+      Passenger user = passengerDao.findById(id);
       user.setlastname(lastname);
       user.setage(age);
       user.setgender(gender);

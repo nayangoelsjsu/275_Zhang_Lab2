@@ -11,6 +11,6 @@ import airline.models.Passenger;
 @Transactional
 public interface PassengerDao extends CrudRepository<Passenger, Integer> {
 
-  public Passenger findById(int id);
+  public Passenger findById(String id);
 
 }

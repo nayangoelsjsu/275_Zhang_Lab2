@@ -16,7 +16,7 @@ public class Passenger {
     
     @Id
     @Column(name = "id")
-    private int id;   
+    private String id;   
 
     @Column(name = "firstname")
     private String firstname;
@@ -46,7 +46,7 @@ public class Passenger {
 
     }
 
-    public Passenger(int id, String firstname,String lastname,int age,String gender,String phone) {
+    public Passenger(String id, String firstname,String lastname,int age,String gender,String phone) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -58,7 +58,7 @@ public class Passenger {
 
 //getter methods
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -93,7 +93,7 @@ public class Passenger {
 
 //setter methods
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id=id;
     }
 
