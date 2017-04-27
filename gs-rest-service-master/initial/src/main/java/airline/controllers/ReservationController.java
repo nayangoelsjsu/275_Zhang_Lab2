@@ -3,6 +3,10 @@ import java.util.*;
 import airline.models.Reservation;
 import airline.models.Passenger;
 import airline.dao.ReservationDao;
+import airline.dao.PassengerDao;
+import airline.dao.FlightDao;
+
+
 import javax.sql.DataSource;
 import airline.models.Flight;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +33,11 @@ public class ReservationController {
 @Autowired
   private ReservationDao reservationDao;
 
+@Autowired
+  private FlightDao flightDao;
+
+  @Autowired
+  private PassengerDao passengerDao;
 
   public String randomIdgen(){
 
@@ -38,7 +47,7 @@ public class ReservationController {
     int  n3 = rand.nextInt(999)+100;
     char c1= (char)n1;
     char c2= (char)n2;
-    char c3= (char) n3;
+    int c3= n3;
     String randomg= ""+c1+c2+c3;
     return randomg;
 
@@ -76,6 +85,104 @@ public ResponseEntity<Reservation> getReservation(@PathVariable String number){
     Reservation reservation = reservationDao.findByorderNumber(number);
     return ResponseEntity.ok(reservation);
 }
+
+
+@RequestMapping(produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.POST)
+public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String,String> requestParams){
+
+  Reservation err_r=null;
+  Reservation reservation=null;
+
+  try{
+  String passenger_id= requestParams.get("passengerId");
+  Passenger passenger= passengerDao.findById(passenger_id);
+  String flight_list= requestParams.get("flightLists");
+  String[] flight_arr= flight_list.split(",");
+  // List<String> listStrings = new ArrayList<String>()
+  List<Flight> fl_list= new ArrayList<Flight>();
+  String orderNumber= randomIdgen();
+
+  Flight flight;
+  int price=0;
+  for(int i=0;i<flight_arr.length;i++){
+    System.out.println("im here bro");
+    flight = flightDao.findBynumber(flight_arr[i]);
+    System.out.println("flight fetched="+flight.getNumber());
+    price= price+ flight.getPrice();
+    System.out.println("flight price="+price);
+    fl_list.add(flight);
+    System.out.println("flight added");
+
+  }
+
+    System.out.println("price="+price);
+
+
+  reservation = new Reservation(orderNumber, passenger, price, fl_list);
+  reservationDao.save(reservation);
+    System.out.println("done bro");
+
+      // return ResponseEntity.ok(reservation);
+
+}
+
+catch (Exception ex) {
+    return ResponseEntity.ok(err_r);
+    }
+      
+       return ResponseEntity.ok(reservation);
+  }
+
+
+
+
+@RequestMapping(produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.POST)
+public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String,String> requestParams){
+
+  Reservation err_r=null;
+  Reservation reservation=null;
+
+  try{
+  String passenger_id= requestParams.get("passengerId");
+  Passenger passenger= passengerDao.findById(passenger_id);
+  String flight_list= requestParams.get("flightLists");
+  String[] flight_arr= flight_list.split(",");
+  // List<String> listStrings = new ArrayList<String>()
+  List<Flight> fl_list= new ArrayList<Flight>();
+  String orderNumber= randomIdgen();
+
+  Flight flight;
+  int price=0;
+  for(int i=0;i<flight_arr.length;i++){
+    System.out.println("im here bro");
+    flight = flightDao.findBynumber(flight_arr[i]);
+    System.out.println("flight fetched="+flight.getNumber());
+    price= price+ flight.getPrice();
+    System.out.println("flight price="+price);
+    fl_list.add(flight);
+    System.out.println("flight added");
+
+  }
+
+    System.out.println("price="+price);
+
+
+  reservation = new Reservation(orderNumber, passenger, price, fl_list);
+  reservationDao.save(reservation);
+    System.out.println("done bro");
+
+      // return ResponseEntity.ok(reservation);
+
+}
+
+catch (Exception ex) {
+    return ResponseEntity.ok(err_r);
+    }
+      
+       return ResponseEntity.ok(reservation);
+  }
+
+
 
 
   // @RequestMapping("/create",method=POST)

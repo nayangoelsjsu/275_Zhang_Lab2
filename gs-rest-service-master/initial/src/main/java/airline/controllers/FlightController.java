@@ -50,7 +50,7 @@ public class FlightController {
     int  n3 = rand.nextInt(999)+100;
     char c1= (char)n1;
     char c2= (char)n2;
-    char c3= (char) n3;
+    int c3=  n3;
     String randomg= ""+c1+c2+c3;
     return randomg;
 
