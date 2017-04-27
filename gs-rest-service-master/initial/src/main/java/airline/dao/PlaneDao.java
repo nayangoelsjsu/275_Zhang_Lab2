@@ -11,6 +11,6 @@ import airline.models.Plane;
 @Transactional
 public interface PlaneDao extends CrudRepository<Plane, Long> {
 
-  public Plane findById(String id);
+  public Plane findById(int id);
 
 }

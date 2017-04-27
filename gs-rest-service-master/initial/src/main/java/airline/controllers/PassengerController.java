@@ -124,6 +124,7 @@ public class PassengerController {
 @RequestMapping(value="/passenger/{id}", 
             params="json",
             produces=MediaType.APPLICATION_JSON_VALUE,method=RequestMethod.GET)
+
 public ResponseEntity<Passenger> getPassenger(@PathVariable String id,@RequestParam boolean json){
     Passenger passenger = passengerDao.findById(id);
     return ResponseEntity.ok(passenger);
@@ -136,7 +137,7 @@ public ResponseEntity<Passenger> getPassengerXML(@PathVariable String id,@Reques
     return ResponseEntity.ok(passenger);
 }
 
-@RequestMapping(method = RequestMethod.POST)   
+@RequestMapping(value="/passenger",method = RequestMethod.POST)   
 public Passenger create(@RequestParam Map<String,String> requestParams){
 
    String firstname=requestParams.get("firstname");

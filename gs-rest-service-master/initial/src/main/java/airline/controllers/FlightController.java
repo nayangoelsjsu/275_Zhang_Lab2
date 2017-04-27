@@ -42,18 +42,24 @@ public class FlightController {
   private PlaneDao planeDao;
 
 
+  public String randomIdgen(){
 
-  //random
+    Random rand = new Random();
+    int  n1 = rand.nextInt(25)+65;
+    int  n2 = rand.nextInt(25)+65;
+    int  n3 = rand.nextInt(999)+100;
+    char c1= (char)n1;
+    char c2= (char)n2;
+    char c3= (char) n3;
+    String randomg= ""+c1+c2+c3;
+    return randomg;
 
-  // public int randomIdgen(){
+  }
 
-  //   Random rand = new Random();
-  //   int  n = rand.nextInt(59900) + 100;
-  //   return n;
+  // public int seatsLeft;
 
-  // }
 
-  @ResponseBody
+  // @ResponseBody
   // @RequestMapping(value="{number}",method=RequestMethod.GET)
   // public String getById(@PathVariable("number") String number) {
   //    int price;   
@@ -94,10 +100,12 @@ public class FlightController {
 @RequestMapping(value="{number}", 
             params="json",
             produces=MediaType.APPLICATION_JSON_VALUE,method=RequestMethod.GET)
+
 public ResponseEntity<Flight> getFlight(@PathVariable String number,@RequestParam boolean json){
     Flight flight = flightDao.findBynumber(number);
     return ResponseEntity.ok(flight);
 } 
+
 @RequestMapping(value="{number}", 
             params="xml",
             produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.GET)
@@ -107,55 +115,84 @@ public ResponseEntity<Flight> getFlightXML(@PathVariable String number,@RequestP
 }
 
 
+//@RequestMapping(value="{number}",method=RequestMethod.POST)   
+//public String create(@RequestParam Map<String,String> requestParams,@PathVariable String number){
 
-
-
-@RequestMapping(method=RequestMethod.POST)   
-public String create(@RequestParam Map<String,String> requestParams){
-
-   String number=requestParams.get("number");
+    // number=requestParams.get("number");
+@RequestMapping(value="{number}", 
+            produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.POST)
+public ResponseEntity<Flight> createFlightXML(@PathVariable String number,@RequestParam Map<String,String> requestParams){
    String from=requestParams.get("from");
    String to=requestParams.get("to");
    String sprice=requestParams.get("price");
    int price= Integer.parseInt(sprice);
    String description= requestParams.get("description");
-
-
 //plane
-
    String model=requestParams.get("model");
    String manufacturer=requestParams.get("manufacturer");
    String scapacity=requestParams.get("capacity");
    int capacity= Integer.parseInt(scapacity);
    String syearOfManufacturer=requestParams.get("yearOfManufacture");
    int yearOfManufacturer= Integer.parseInt(syearOfManufacturer);
-    // int planeid= randomIdgen();
-   
+    // int planeid= randomIdgen();x
    //String phone=requestParams.get("phone");
    //int id=2;
-
+   Flight err_f=flightDao.findBynumber(number);
+   Flight fl;
 try{
-
 
       String departureTime=requestParams.get("departureTime");
   // Date departureTime=new SimpleDateFormat("yyyy-mm-dd-hh").parse(sdepartureTime);
    String arrivalTime=requestParams.get("arrivalTime");
    //Date arrivalTime=new SimpleDateFormat("yyyy-mm-dd-hh").parse(sarrivalTime);
 
-      Plane plane= new Plane(model,manufacturer,capacity,yearOfManufacturer,1);
+       fl=flightDao.findBynumber(number);
+       System.out.println("fl yeh hai bhai"+fl);
+      if(fl==null){
+      Plane plane= new Plane(model,manufacturer,capacity,yearOfManufacturer);
       planeDao.save(plane);
 
-      Flight flight = new Flight(number,from, price, to, 100, departureTime,arrivalTime,description,1);
+      Flight flight = new Flight(number,from, price, to, capacity, departureTime,arrivalTime,description,plane);
       flightDao.save(flight);
+
+      return ResponseEntity.ok(flight);
+
+    }
+    else{
+
+
+      fl.setPrice(price);
+      fl.setFrom(from);
+      fl.setTo(to);
+      fl.setDepartureTime(departureTime);
+      fl.setArrivalTime(arrivalTime);
+      fl.setDescription(description);
+
+      Plane pl=fl.getPlane();
+      int pl_id=pl.getId();
+
+      Plane pl_update= planeDao.findById(pl_id);
+      pl_update.setModel(model);
+      pl_update.setCapacity(capacity);
+      pl_update.setYearOfManufacture(yearOfManufacturer);
+      pl_update.setManufacturer(manufacturer);
+
+      flightDao.save(fl);
+      planeDao.save(pl_update);
+
+    }
 
     
       // passengerId = String.valueOf(passenger.getId());
 }
   catch (Exception ex) {
-      return "Error creating the Flight: " + ex.toString();
+    return ResponseEntity.ok(err_f);
+      //return "Error creating the Flight: " + ex.toString();
     }
       //return new Passenger(id,firstname,lastname,age,gender,phone);
-    return "Flight succesfully created with number = " + number;
+    //return "Flight succesfully created with number = " + number;
+       return ResponseEntity.ok(fl);
+
 }
 
  @RequestMapping(value="{number}",method = RequestMethod.DELETE)

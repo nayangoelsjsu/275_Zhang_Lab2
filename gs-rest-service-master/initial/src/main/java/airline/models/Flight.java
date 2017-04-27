@@ -6,19 +6,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Column;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.sql.DataSource;
+import com.fasterxml.jackson.annotation.*;
 
+import airline.models.Plane;
 import java.util.*;
 
 @Entity
 @Table(name = "Flight")
 public class Flight {
     
-     @Id
     // @Column(name= "id")
     // private int id;
 
+    @Id
     @Column(name = "number")
     private String number;
 
@@ -43,12 +46,29 @@ public class Flight {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "plane_id")
-    private int plane_id;
+    // @Column(name = "plane_id")
+    // private int plane_id;
 
-    // private List<Passenger> passengers;
 
-     public Flight(String number,String from,int price,String to,int seatsLeft,String departureTime,String arrivalTime,String description,int plane_id) {
+    // @Column(name="passenger_id")
+    // private String passenger_id;
+
+    @OneToOne(fetch=FetchType.LAZY)
+  @JoinColumn(name="plane_id")
+  @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+  private Plane plane;
+
+@OneToMany
+@JoinColumn(name="flight_id", referencedColumnName="number")
+    private List<Passenger> passenger;
+
+    public Flight(List<Passenger> passenger){
+
+        this.passenger=passenger;
+        
+    }
+
+     public Flight(String number,String from,int price,String to,int seatsLeft,String departureTime,String arrivalTime,String description,Plane plane) {
     
         this.number = number;
         this.from = from;
@@ -58,10 +78,10 @@ public class Flight {
         this.departureTime = departureTime;
         this.arrivalTime=arrivalTime;
         this.description=description;
-        this.plane_id=plane_id;
-        // this.passengers=passengers;
+        this.plane=plane;
 
     }
+
     public Flight(){
         
     }
@@ -102,12 +122,12 @@ public class Flight {
     public String getDescription() {
         return description;
     }
-    public int getPlane() {
-        return plane_id;
+    public Plane getPlane() {
+        return plane;
     }
-    // public List<Passenger> getPassengers() {
-    //     return passengers;
-    // }
+    public List<Passenger> getPassenger() {
+        return passenger;
+    }
 
 //setter methods
 
@@ -115,40 +135,40 @@ public class Flight {
     //     this.id=id;
     // }
 
-   public void setNumber() {
+   public void setNumber(String number) {
         this.number=number;
     }
 
-    public void setFrom() {
+    public void setFrom(String from) {
         this.from=from;
     }
 
-    public void setTo() {
+    public void setTo(String to) {
         this.to=to;
     }
 
-    public void setSeatsLeft() {
+    public void setSeatsLeft(int seatsLeft) {
         this.seatsLeft=seatsLeft;
     }
 
-    public void setPrice() {
+    public void setPrice(int price) {
         this.price=price;
     }
 
-    public void setDepartureTime() {
+    public void setDepartureTime(String departureTime) {
         this.departureTime=departureTime;
     }
-    public void setArrivalTime() {
+    public void setArrivalTime(String arrivalTime) {
         this.arrivalTime=arrivalTime;
     }
 
-    public void setDescription() {
+    public void setDescription(String description) {
         this.description=description;
     }
-    public void setPlane() {
-        this.plane_id=plane_id;
+    public void setPlane(Plane plane) {
+        this.plane=plane;
     }
-    // public void setPassengers() {
-    //     this.passengers=passengers;
-    // }
+    public void setPassenger(List<Passenger> passenger) {
+        this.passenger=passenger;
+    }
 }

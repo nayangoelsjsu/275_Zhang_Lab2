@@ -30,8 +30,7 @@ public class Plane {
     @Column(name="yearOfManufacture")
     private int yearOfManufacture;
 
-     public Plane(String model,String manufacturer,int capacity,int yearOfManufacture,int id) {
-        this.id=id;
+     public Plane(String model,String manufacturer,int capacity,int yearOfManufacture) {
         this.model = model;
         this.manufacturer = manufacturer;
         this.capacity = capacity;
@@ -69,23 +68,23 @@ public class Plane {
 
 //setter methods
 
-    public void setModel() {
+    public void setModel(String model) {
        this.model = model;
     }
 
-    public void setManufacturer() {
+    public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
     }
 
-    public void setCapacity() {
+    public void setCapacity(int capacity) {
       this.capacity = capacity;
     }
 
-    public void setYearOfManufacture() {
+    public void setYearOfManufacture(int yearOfManufacture) {
         this.yearOfManufacture = yearOfManufacture;
     }
 
-     public void setId() {
+     public void setId(int id) {
        this.id = id;
     }
 
