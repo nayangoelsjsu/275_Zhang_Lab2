@@ -9,8 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Column;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.sql.DataSource;
+import com.fasterxml.jackson.annotation.*;
 
 
 @Entity
@@ -20,28 +22,29 @@ public class Reservation {
     // @Id
     // private int id;   
     @Id
-    @Column(name="id")
-    private int id;
-
     @Column(name="orderNumber")
     private String orderNumber;
-
-    @Column(name="passenger_id")
-    private String passenger_id;
 
     @Column(name="price")
     private int price;
 
-    @Column(name="flight_id")
-    private String flight_id;
+   
+    @OneToOne(fetch=FetchType.LAZY)
+  @JoinColumn(name="passenger_id")
+  @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+  private Passenger passenger;
 
-     public Reservation(int id,String orderNumber,String passenger_id,int price,String flight_id) {
-        this.id=id;
+@OneToMany
+@JoinColumn(name="reservation_id", referencedColumnName="orderNumber")
+    private List<Flight> flight;
+
+     public Reservation(String orderNumber,Passenger passenger,int price,List<Flight> flight) {
+
+        // this.id=id;
         this.orderNumber = orderNumber;
-        this.passenger_id = passenger_id;
+        this.passenger = passenger;
         this.price = price;
-        this.flight_id = flight_id;
-
+        this.flight = flight;
     }
     public Reservation(){
         
@@ -49,49 +52,42 @@ public class Reservation {
 
 //getter methods
 
-    public int getId() {
-        return id;
-    }
-
     public String getOrderNumber() {
         return orderNumber;
     }
 
-    public String getPassenger_id() {
-        return passenger_id;
+    public Passenger getPassenger() {
+        return passenger;
     }
 
     public int getPrice() {
         return price;
     }
 
-    public String getFlight_id() {
-        return flight_id;
+    public List<Flight> getFlight() {
+        return flight;
     }
-
-    
-
 
 //setter methods
 
-    public void setId(int id) {
-        this.id=id;
-    }
+    // public void setId(int id) {
+    //     this.id=id;
+    // }
 
     public void setOrderNumber(String orderNumber) {
         this.orderNumber=orderNumber;
     }
 
-    public void setPassenger_id(String passenger_id) {
-        this.passenger_id=passenger_id;
+    public void setPassenger(Passenger passenger) {
+        this.passenger=passenger;
     }
 
     public void setPrice(int price) {
         this.price=price;
     }
 
-    public void setFlight_id(String flight_id) {
-        this.flight_id=flight_id;
+    public void setFlight(List<Flight> flight) {
+        this.flight=flight;
     }
 
    

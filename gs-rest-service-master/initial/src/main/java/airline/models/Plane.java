@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 public class Plane {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name="id")
     private int id;
 
