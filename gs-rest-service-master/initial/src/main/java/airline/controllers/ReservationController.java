@@ -134,14 +134,21 @@ catch (Exception ex) {
   }
 
 
+<<<<<<< Updated upstream
 
 
 // @RequestMapping(produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.POST)
 // public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String,String> requestParams){
+=======
+@RequestMapping(value="{number}", 
+            produces=MediaType.APPLICATION_JSON_VALUE,method=RequestMethod.POST)
+public ResponseEntity<Reservation> updateReservation(@PathVariable String number,@RequestParam Map<String,String> requestParams){
+>>>>>>> Stashed changes
 
 //   Reservation err_r=null;
 //   Reservation reservation=null;
 
+<<<<<<< Updated upstream
 //   try{
 //   String passenger_id= requestParams.get("passengerId");
 //   Passenger passenger= passengerDao.findById(passenger_id);
@@ -161,15 +168,70 @@ catch (Exception ex) {
 //     System.out.println("flight price="+price);
 //     fl_list.add(flight);
 //     System.out.println("flight added");
+=======
+  try{
+  // String passenger_id= requestParams.get("passengerId");
+  // Passenger passenger= passengerDao.findById(passenger_id);
+  String flightsAdded= requestParams.get("flightsAdded");
+  String flightsRemoved= requestParams.get("flightsRemoved");
+
+  String[] flightadd_arr= flightsAdded.split(",");
+  String[] flightrem_arr= flightsRemoved.split(",");
+
+  // List<String> listStrings = new ArrayList<String>()
+
+  reservation= reservationDao.findByorderNumber(number);
+  List<Flight> fl_list= reservation.getFlight();
+
+  Flight flight;
+
+  int price= reservation.getPrice();
+  // int price=0;
+
+  for(int i=0;i<flightadd_arr.length;i++){
+    System.out.println("im here bro");
+    flight = flightDao.findBynumber(flightadd_arr[i]);
+
+    System.out.println("flight fetched="+flight.getNumber());
+    price= price+ flight.getPrice();
+
+    System.out.println("flight price="+price);
+    fl_list.add(flight);
+    System.out.println("flight added");
+>>>>>>> Stashed changes
 
 //   }
 
+<<<<<<< Updated upstream
 //     System.out.println("price="+price);
 
 
 //   reservation = new Reservation(orderNumber, passenger, price, fl_list);
 //   reservationDao.save(reservation);
 //     System.out.println("done bro");
+=======
+  for(int i=0;i<flightrem_arr.length;i++){
+    
+    System.out.println("im here bro");
+    flight = flightDao.findBynumber(flightrem_arr[i]);
+
+
+    System.out.println("flight fetched="+flight.getNumber());
+    price= price- flight.getPrice();
+
+    System.out.println("flight price="+price);
+    fl_list.remove(flight);
+    System.out.println("flight removed");
+
+  }
+
+    System.out.println("price="+price);
+
+
+  reservation.setFlight(fl_list);
+  reservationDao.save(reservation);
+    System.out.println("done bro");
+>>>>>>> Stashed changes
 
 //       // return ResponseEntity.ok(reservation);
 
@@ -183,6 +245,31 @@ catch (Exception ex) {
 //   }
 
 
+
+@RequestMapping(produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.GET)
+public ResponseEntity<Reservation> searchReservationXML(@RequestParam Map<String,String> requestParams){
+
+
+  Reservation err_r=null;
+
+  try{
+
+    Reservation reservation = reservationDao.findByorderNumber(number);
+
+    String flightNumber= requestParams.get("flightNumber");
+    Flight flight= flightDao.findBynumber(flightNumber);
+    List<Flight> fl_list= new ArrayList<Flight>();
+    fl_list.add(flight);
+    Reservation print_reservation= new Reservation(number, reservation.getPassenger(), reservation.getPrice(), fl_list);
+
+    } 
+  catch(Exception e){
+    return ResponseEntity.ok(err_r);
+
+  }
+       return ResponseEntity.ok(print_reservation);
+
+}
 
 
   // @RequestMapping("/create",method=POST)

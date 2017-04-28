@@ -62,6 +62,10 @@ public class Flight {
 @JoinColumn(name="flight_id", referencedColumnName="number")
     private List<Passenger> passenger;
 
+    @ManyToMany(mappedBy="flight")
+    private List<Reservation> reservation;
+
+
     public Flight(List<Passenger> passenger){
 
         this.passenger=passenger;
@@ -129,6 +133,9 @@ public class Flight {
         return passenger;
     }
 
+    public List<Reservation> getReservation() {
+        return reservation;
+    }
 //setter methods
 
     // public void id() {
@@ -170,5 +177,8 @@ public class Flight {
     }
     public void setPassenger(List<Passenger> passenger) {
         this.passenger=passenger;
+    }
+    public void setReservation(List<Reservation> reservation) {
+        this.reservation=reservation;
     }
 }

@@ -34,8 +34,8 @@ public class Reservation {
   @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
   private Passenger passenger;
 
-@OneToMany
-@JoinColumn(name="reservation_id", referencedColumnName="orderNumber")
+@ManyToMany
+@JoinTable(name="reservation_flight_rel", joinColumns={@JoinColumn(name="orderNumber")},inverseJoinColumns={@JoinColumn(name="number")})
     private List<Flight> flight;
 
      public Reservation(String orderNumber,Passenger passenger,int price,List<Flight> flight) {
