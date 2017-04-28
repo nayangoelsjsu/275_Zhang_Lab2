@@ -15,5 +15,7 @@ public interface ReservationDao extends CrudRepository<Reservation, Long> {
 
   public Reservation deleteByorderNumber(String number);
 
+  public Reservation findBypassengerId(String number);
+
 
 }

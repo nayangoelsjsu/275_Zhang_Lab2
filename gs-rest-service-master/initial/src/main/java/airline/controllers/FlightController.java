@@ -237,8 +237,6 @@ try{
 
     }
 
-    
-      // passengerId = String.valueOf(passenger.getId());
 }
   catch (Exception ex) {
     return ResponseEntity.ok(err_f);

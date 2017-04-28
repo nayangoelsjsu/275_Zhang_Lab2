@@ -13,10 +13,12 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.sql.DataSource;
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 
 
 @Entity
 @Table(name = "Reservation")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property="orderNumber")
 public class Reservation {
     
     // @Id

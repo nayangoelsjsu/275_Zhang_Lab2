@@ -6,9 +6,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Column;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.sql.DataSource;
+import com.fasterxml.jackson.annotation.*;
 
+import airline.models.*;
+import java.util.*;
 
 @Entity
 @Table(name = "Passenger")
@@ -41,6 +45,9 @@ public class Passenger {
     //     this.code=code;
     //     this.msg=msg;
     // }
+
+@ManyToMany(mappedBy="passenger")
+    private List<Flight> flight;
 
     public Passenger(){
 

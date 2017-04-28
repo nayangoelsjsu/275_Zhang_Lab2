@@ -11,7 +11,9 @@ import javax.validation.constraints.NotNull;
 import javax.sql.DataSource;
 import com.fasterxml.jackson.annotation.*;
 
-import airline.models.Plane;
+import airline.models.*;
+
+
 import java.util.*;
 
 @Entity
@@ -58,9 +60,9 @@ public class Flight {
   @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
   private Plane plane;
 
-@OneToMany
-@JoinColumn(name="flight_id", referencedColumnName="number")
-    private List<Passenger> passenger;
+@ManyToMany
+@JoinTable(name="passenger_flight_rel", joinColumns={@JoinColumn(name="number")},inverseJoinColumns={@JoinColumn(name="id")})
+private List<Passenger> passenger;
 
     @ManyToMany(mappedBy="flight")
     private List<Reservation> reservation;
