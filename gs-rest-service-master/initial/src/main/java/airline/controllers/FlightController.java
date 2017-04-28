@@ -2,6 +2,13 @@ package airline.controllers;
 
 import java.util.*;
 import java.text.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.io.*;
+//import javax.faces.context.ExceptionHandler;
+//package com.journaldev.spring.exceptions;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.http.HttpStatus; 
 
 import airline.models.Flight;
 import airline.models.Plane;
@@ -98,21 +105,63 @@ public class FlightController {
 
 
 @RequestMapping(value="{number}", 
-            params="json",
+            //params="json",
             produces=MediaType.APPLICATION_JSON_VALUE,method=RequestMethod.GET)
 
-public ResponseEntity<Flight> getFlight(@PathVariable String number,@RequestParam boolean json){
+public ResponseEntity<Flight> getFlight(@PathVariable String number) throws Exception{
     Flight flight = flightDao.findBynumber(number);
+    if(flight==null)
+    {
+      throw new Exception("Sorry, the requested flight "+number+" does not exist-404");
+    }
     return ResponseEntity.ok(flight);
 } 
+
+@ExceptionHandler(Exception.class)
+@ResponseBody
+public Map<String,String> errorResponse(Exception ex, HttpServletResponse response){
+Map<String,String> errorMap = new HashMap<String,String>();
+String ans=ex.getMessage();
+String[] a=ans.split("-");
+String msg=a[0];
+String code=a[1];
+errorMap.put("code",code);
+errorMap.put("msg",msg);
+StringWriter sw = new StringWriter();
+PrintWriter pw = new PrintWriter(sw);
+ex.printStackTrace(pw);
+String stackTrace = sw.toString();
+//errorMap.put("errorStackTrace", stackTrace);
+response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+return errorMap;
+}
 
 @RequestMapping(value="{number}", 
             params="xml",
             produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.GET)
-public ResponseEntity<Flight> getFlightXML(@PathVariable String number,@RequestParam boolean xml){
+public ResponseEntity<Flight> getFlightXML(@PathVariable String number,@RequestParam boolean xml) throws Exception{
     Flight flight = flightDao.findBynumber(number);
+     if(flight==null)
+    {
+      throw new Exception("Sorry, the requested flight "+number+" does not exist-404");
+    }
     return ResponseEntity.ok(flight);
 }
+
+// @ExceptionHandler(Exception.class)
+// @ResponseBody
+// public Map<String,String> errorResponse(Exception ex, HttpServletResponse response){
+// Map<String,String> errorMap = new HashMap<String,String>();
+// errorMap.put("code","404");
+// errorMap.put("msg",ex.getMessage());
+// StringWriter sw = new StringWriter();
+// PrintWriter pw = new PrintWriter(sw);
+// ex.printStackTrace(pw);
+// String stackTrace = sw.toString();
+// //errorMap.put("errorStackTrace", stackTrace);
+// response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+// return errorMap;
+// }
 
 
 //@RequestMapping(value="{number}",method=RequestMethod.POST)   
@@ -172,6 +221,11 @@ try{
       int pl_id=pl.getId();
 
       Plane pl_update= planeDao.findById(pl_id);
+      if(pl_update==null){
+      throw new Exception("Sorry, the requested flight "+number+" does not exist to be updated.-404");
+
+      }
+      else{
       pl_update.setModel(model);
       pl_update.setCapacity(capacity);
       pl_update.setYearOfManufacture(yearOfManufacturer);
@@ -179,6 +233,7 @@ try{
 
       flightDao.save(fl);
       planeDao.save(pl_update);
+    }
 
     }
 
@@ -197,15 +252,27 @@ try{
 
  @RequestMapping(value="{number}",method = RequestMethod.DELETE)
   @ResponseBody
-  public String delete(@PathVariable("number") String number) {
-    try {
+  public void delete(@PathVariable("number") String number) throws Exception {
+    //try {
       Flight flight = flightDao.findBynumber(number);
+      if(flight==null){
+      throw new Exception("Sorry, the requested flight "+number+" could not be deleted as the flight number is not present.-404");
+      //return "";
+    }
+    else{
       flightDao.delete(flight);
+      throw new Exception("The flight number "+number+" has been deleted successfully.-200");
+      
+      
+      //return "";
     }
-    catch (Exception ex) {
-      return "Error deleting the flight:" + ex.toString();
-    }
-    return "Flight succesfully deleted!";
+    //}
+    // catch (Exception ex) {
+    //   System.out.println("Error deleting the flight:" + ex.toString());
+    //   throw new Exception("Sorry, the requested flight "+number+" could not be deleted as the flight number is not present.-404");
+    // }
+    //return "";
+   
   }
 
   // @RequestMapping("/create",method=POST)
