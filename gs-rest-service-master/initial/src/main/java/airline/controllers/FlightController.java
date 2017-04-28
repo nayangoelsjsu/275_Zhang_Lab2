@@ -110,6 +110,7 @@ public class FlightController {
 
 public ResponseEntity<Flight> getFlight(@PathVariable String number) throws Exception{
     Flight flight = flightDao.findBynumber(number);
+    System.out.println("F: "+flight);
     if(flight==null)
     {
       throw new Exception("Sorry, the requested flight "+number+" does not exist-404");
@@ -247,7 +248,7 @@ try{
        return ResponseEntity.ok(fl);
 
 }
-
+//!!!!!!
  @RequestMapping(value="{number}",method = RequestMethod.DELETE)
   @ResponseBody
   public void delete(@PathVariable("number") String number) throws Exception {
@@ -258,9 +259,14 @@ try{
       //return "";
     }
     else{
+      if(flight.order_number!=null)
+      {
       flightDao.delete(flight);
       throw new Exception("The flight number "+number+" has been deleted successfully.-200");
-      
+      }
+      else{
+        throw new Exception("You can not delete a flight that has one or more reservation.-400");
+      }
       
       //return "";
     }

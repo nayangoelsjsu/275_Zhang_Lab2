@@ -5,6 +5,10 @@ import airline.models.Passenger;
 import airline.dao.ReservationDao;
 import airline.dao.PassengerDao;
 import airline.dao.FlightDao;
+import javax.servlet.http.*;
+import java.io.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.http.HttpStatus; 
 
 
 import javax.sql.DataSource;
@@ -81,19 +85,42 @@ public class ReservationController {
   @RequestMapping(value="{number}", 
             produces=MediaType.APPLICATION_JSON_VALUE,method=RequestMethod.GET)
 
-public ResponseEntity<Reservation> getReservation(@PathVariable String number){
+public ResponseEntity<Reservation> getReservation(@PathVariable String number) throws Exception{
     Reservation reservation = reservationDao.findByorderNumber(number);
+      if(reservation==null)
+    {
+throw new Exception("Sorry, the requested reservation number "+number+" does not exist.-404");
+    }
     return ResponseEntity.ok(reservation);
+}
+
+@ExceptionHandler(Exception.class)
+@ResponseBody
+public Map<String,String> errorResponse(Exception ex, HttpServletResponse response){
+Map<String,String> errorMap = new HashMap<String,String>();
+String ans=ex.getMessage();
+String[] a=ans.split("-");
+String msg=a[0];
+String code=a[1];
+errorMap.put("code",code);
+errorMap.put("msg",msg);
+StringWriter sw = new StringWriter();
+PrintWriter pw = new PrintWriter(sw);
+ex.printStackTrace(pw);
+String stackTrace = sw.toString();
+//errorMap.put("errorStackTrace", stackTrace);
+response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+return errorMap;
 }
 
 
 @RequestMapping(produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.POST)
-public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String,String> requestParams){
+public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String,String> requestParams) throws Exception{
 
   Reservation err_r=null;
   Reservation reservation=null;
 
-  try{
+  //try{
   String passenger_id= requestParams.get("passengerId");
   Passenger passenger= passengerDao.findById(passenger_id);
   String flight_list= requestParams.get("flightLists");
@@ -120,31 +147,40 @@ public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String
 
     System.out.println("price="+price);
 
-
-  reservation = new Reservation(orderNumber, passenger, price, fl_list);
-  reservationDao.save(reservation);
+ reservation= reservationDao.findByorderNumber(orderNumber);
+      if(reservation==null){
+      reservation = new Reservation(orderNumber, passenger, price, fl_list);
+      reservationDao.save(reservation);
+    }
+    else{
+    throw new Exception("Another reservation with same number "+orderNumber+" exists.-400");
+    }
+  
+  
     System.out.println("done bro");
+    Reservation res1= reservationDao.findByorderNumber(orderNumber);
+    return ResponseEntity.ok(res1);
 
       // return ResponseEntity.ok(reservation);
 
-}
+//}
 
-catch (Exception ex) {
-    return ResponseEntity.ok(err_r);
-    }
+//catch (Exception ex) {
+    //return ResponseEntity.ok(err_r);
+    //}
       
-       return ResponseEntity.ok(reservation);
+       //return ResponseEntity.ok(reservation);
   }
 
 
 @RequestMapping(value="{number}", 
             produces=MediaType.APPLICATION_JSON_VALUE,method=RequestMethod.POST)
-public ResponseEntity<Reservation> updateReservation(@PathVariable String number,@RequestParam Map<String,String> requestParams){
+public ResponseEntity<Reservation> updateReservation(@PathVariable String number,@RequestParam Map<String,String> requestParams) throws Exception{
 
   Reservation err_r=null;
   Reservation reservation=null;
 
-  try{
+
   // String passenger_id= requestParams.get("passengerId");
   // Passenger passenger= passengerDao.findById(passenger_id);
   String flightsAdded= requestParams.get("flightsAdded");
@@ -191,18 +227,17 @@ public ResponseEntity<Reservation> updateReservation(@PathVariable String number
 
     System.out.println("price="+price);
 
-
+Reservation res = reservationDao.findByorderNumber(number);
+      if(res==null){
+        throw new Exception("Sorry, the requested reservation with number "+number+" cannot be updated as it is not present.-404");
+      }
+      else{
   reservation.setFlight(fl_list);
   reservationDao.save(reservation);
+}
     System.out.println("done bro");
 
       // return ResponseEntity.ok(reservation);
-
-}
-
-catch (Exception ex) {
-    return ResponseEntity.ok(err_r);
-    }
       
        return ResponseEntity.ok(reservation);
   }
@@ -239,49 +274,19 @@ public ResponseEntity<Reservation> searchReservationXML(@RequestParam Map<String
 }
 
 
-  // @RequestMapping("/create",method=POST)
-  // @ResponseBody
-  // public String create(String firstname, String lastname, int age, String gender, String phone) {
-  //   String userId = "";
-  //   try {
-  //     Passenger passenger = new Passenger(firstname, lastname, age, gender, phone);
-  //     passengerDao.save(user);
-  //     passengerId = String.valueOf(passenger.getId());
-  //   }
-  //   catch (Exception ex) {
-  //     return "Error creating the passenger: " + ex.toString();
-  //   }
-  //   return "Passenger succesfully created with id = " + passengerId;
-  // }
-  
-
- // @RequestMapping(value="{id}",method = RequestMethod.DELETE)
- //  @ResponseBody
- //  public Passenger delete(@PathVariable("id") int id) {
- //    try {
- //      Passenger passenger = passengerDao.findById(id);
- //      passengerDao.delete(passenger);
- //    }
- //    catch (Exception ex) {
- //      return new Passenger(404,"Sorry, the requested passenger with id"+id+" does not exist");
- //    }
- //      return new Passenger(200,"The requested passenger with id"+id+" deleted successfully");
- //  }
-
-
- // @RequestMapping(value="{orderNumber}",method = RequestMethod.DELETE)
- //  @ResponseBody
- //  public String delete(@PathVariable("orderNumber") String orderNumber) {
- //    try {
- //      Reservation reservation = reservationDao.findByorderNumber(orderNumber);
- //      System.out.println(reservation.getFlight_id());
- //      reservationDao.deleteByorderNumber(orderNumber);
- //    }
- //    catch (Exception ex) {
- //      return "Error deleting the reservation:" + ex.toString();
- //    }
- //    return "Reservation succesfully deleted!";
- //  }
+ @RequestMapping(value="{orderNumber}",method = RequestMethod.DELETE)
+  @ResponseBody
+  public String delete(@PathVariable("orderNumber") String orderNumber) throws Exception{
+    
+    Reservation reservation = reservationDao.findByorderNumber(orderNumber);
+      if(reservation==null){
+throw new Exception("Reservation with orderNumber "+orderNumber+" does not exist.-404");
+      }
+      else{
+      reservationDao.delete(reservation);
+      throw new Exception("Reservation orderNumber "+orderNumber+" deleted successfully.-200");
+    }
+  }
   
   
   

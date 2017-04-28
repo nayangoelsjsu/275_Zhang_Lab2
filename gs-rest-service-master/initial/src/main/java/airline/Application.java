@@ -20,7 +20,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan
-@PropertySource("file:/Users/NayanGoel/Desktop/275_Zhang_Lab2/gs-rest-service-master/initial/src/main/java/resources/application.properties")
+@PropertySource("file:/Users/Tirath/Downloads/275_Zhang_Lab2/gs-rest-service-master/initial/src/main/java/resources/application.properties")
 public class Application {
 
     public static void main(String[] args) {
