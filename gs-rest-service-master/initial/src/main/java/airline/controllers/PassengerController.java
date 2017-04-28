@@ -4,6 +4,11 @@ import java.util.*;
 import airline.models.Passenger;
 import airline.dao.PassengerDao;
 import javax.sql.DataSource;
+import javax.servlet.http.*;
+import java.io.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.http.HttpStatus; 
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -122,23 +127,57 @@ public class PassengerController {
 
 
 @RequestMapping(value="/passenger/{id}", 
-            params="json",
+            //params="json",
             produces=MediaType.APPLICATION_JSON_VALUE,method=RequestMethod.GET)
 
-public ResponseEntity<Passenger> getPassenger(@PathVariable String id,@RequestParam boolean json){
+public ResponseEntity<Passenger> getPassenger(@PathVariable String id) throws Exception{
     Passenger passenger = passengerDao.findById(id);
+    if(passenger==null)
+    {
+throw new Exception("Sorry, the requested passenger with id "+id+" does not exist-404");
+    }
     return ResponseEntity.ok(passenger);
 } 
+
+@ExceptionHandler(Exception.class)
+@ResponseBody
+public Map<String,String> errorResponse(Exception ex, HttpServletResponse response){
+Map<String,String> errorMap = new HashMap<String,String>();
+String ans=ex.getMessage();
+String[] a=ans.split("-");
+String msg=a[0];
+String code=a[1];
+errorMap.put("code",code);
+errorMap.put("msg",msg);
+StringWriter sw = new StringWriter();
+PrintWriter pw = new PrintWriter(sw);
+ex.printStackTrace(pw);
+String stackTrace = sw.toString();
+//errorMap.put("errorStackTrace", stackTrace);
+response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+return errorMap;
+}
+
+
 @RequestMapping(value="/passenger/{id}", 
             params="xml",
             produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.GET)
-public ResponseEntity<Passenger> getPassengerXML(@PathVariable String id,@RequestParam boolean xml){
+public ResponseEntity<Passenger> getPassengerXML(@PathVariable String id,@RequestParam boolean xml) throws Exception{
     Passenger passenger = passengerDao.findById(id);
+    if(passenger==null)
+    {
+throw new Exception("Sorry, the requested passenger with id "+id+" does not exist-404");
+    }
     return ResponseEntity.ok(passenger);
 }
 
-@RequestMapping(value="/passenger",method = RequestMethod.POST)   
-public Passenger create(@RequestParam Map<String,String> requestParams){
+
+
+@RequestMapping(value="/passenger", 
+            //params="json",
+            produces=MediaType.APPLICATION_JSON_VALUE,method=RequestMethod.POST)
+//public ResponseEntity<Passenger> getPassenger(@PathVariable String id) throws Exception{
+public ResponseEntity<Passenger> create(@RequestParam Map<String,String> requestParams)throws Exception{
 
    String firstname=requestParams.get("firstname");
    String lastname=requestParams.get("lastname");
@@ -149,42 +188,46 @@ public Passenger create(@RequestParam Map<String,String> requestParams){
    int id=randomIdgen();
    String sid=Integer.toString(id);
 
-try{
+
+      Passenger pass= passengerDao.findById(sid);
+      if(pass==null){
       Passenger passenger = new Passenger(sid,firstname, lastname, age, gender, phone);
       passengerDao.save(passenger);
-    
-      // passengerId = String.valueOf(passenger.getId());
-}
-  catch (Exception ex) {
-      //return new Passenger(404,ex.toString());
-
     }
-      //return new Passenger(id,firstname,lastname,age,gender,phone);
-    Passenger pass= passengerDao.findById(sid);
-    return pass;
+    else{
+    throw new Exception("Another passenger with same id "+id+" exists-400");
+    }
+
+    Passenger pass1= passengerDao.findById(sid);
+    return ResponseEntity.ok(pass1);
+    //return pass;
 }
   
   /**
    * DELETE /delete  --> Delete the user having the passed id.
    */
 
-  // @RequestMapping(value="/passenger/{id}",method = RequestMethod.DELETE)
-  // @ResponseBody
-  // public Passenger delete(@PathVariable("id") int id) {
-  //   try {
-  //     Passenger passenger = passengerDao.findById(id);
-  //     passengerDao.delete(passenger);
-  //   }
-  //   catch (Exception ex) {
-  //     //return new Passenger(404,"Sorry, the requested passenger with id"+id+" does not exist");
-  //   }
-  //     //return new Passenger(200,"The requested passenger with id"+id+" deleted successfully");
-  // }
+  @RequestMapping(value="/passenger/{id}",method = RequestMethod.DELETE)
+  @ResponseBody
+  public Passenger delete(@PathVariable("id") String id) throws Exception{
+   
+      Passenger passenger = passengerDao.findById(id);
+      if(passenger==null){
+throw new Exception("Passenger with id "+id+" does not exist.-404");
+      }
+      else{
+      passengerDao.delete(passenger);
+      throw new Exception("Passenger id "+id+" deleted successfully.-200");
+    }
+    
+    
+      //return new Passenger(200,"The requested passenger with id"+id+" deleted successfully");
+  }
 
 
   @RequestMapping(value="/passenger/{id}",method = RequestMethod.PUT)
   @ResponseBody
-  public Passenger updateUser(@RequestParam Map<String,String> requestParams, @PathVariable("id") String id) {
+  public Passenger updateUser(@RequestParam Map<String,String> requestParams, @PathVariable("id") String id) throws Exception {
     String firstname="";
     String lastname="";
     int age=0;;
@@ -193,7 +236,7 @@ try{
     String sage="";
 
 
-    try {
+   
 
        firstname=requestParams.get("firstname");
        lastname=requestParams.get("lastname");
@@ -203,16 +246,20 @@ try{
        phone=requestParams.get("phone");
 
       Passenger user = passengerDao.findById(id);
+      if(user==null){
+        throw new Exception("Sorry, the requested passenger with id "+id+" cannot be updated as it is not present.-404");
+      }
       user.setlastname(lastname);
       user.setage(age);
       user.setgender(gender);
       user.setphone(phone);
+      user.setfirstname(firstname);
       passengerDao.save(user);
-    }
-    catch (Exception ex) {
+  
+      
       //return "Error updating the user: " + ex.toString();
       //return new Passenger(404,"xxx");
-    }
+    
     //return "User succesfully updated!";
     return new Passenger(id,firstname, lastname, age, gender, phone);
   }

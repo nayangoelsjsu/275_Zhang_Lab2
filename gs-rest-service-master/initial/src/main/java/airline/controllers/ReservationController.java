@@ -136,51 +136,51 @@ catch (Exception ex) {
 
 
 
-@RequestMapping(produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.POST)
-public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String,String> requestParams){
+// @RequestMapping(produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.POST)
+// public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String,String> requestParams){
 
-  Reservation err_r=null;
-  Reservation reservation=null;
+//   Reservation err_r=null;
+//   Reservation reservation=null;
 
-  try{
-  String passenger_id= requestParams.get("passengerId");
-  Passenger passenger= passengerDao.findById(passenger_id);
-  String flight_list= requestParams.get("flightLists");
-  String[] flight_arr= flight_list.split(",");
-  // List<String> listStrings = new ArrayList<String>()
-  List<Flight> fl_list= new ArrayList<Flight>();
-  String orderNumber= randomIdgen();
+//   try{
+//   String passenger_id= requestParams.get("passengerId");
+//   Passenger passenger= passengerDao.findById(passenger_id);
+//   String flight_list= requestParams.get("flightLists");
+//   String[] flight_arr= flight_list.split(",");
+//   // List<String> listStrings = new ArrayList<String>()
+//   List<Flight> fl_list= new ArrayList<Flight>();
+//   String orderNumber= randomIdgen();
 
-  Flight flight;
-  int price=0;
-  for(int i=0;i<flight_arr.length;i++){
-    System.out.println("im here bro");
-    flight = flightDao.findBynumber(flight_arr[i]);
-    System.out.println("flight fetched="+flight.getNumber());
-    price= price+ flight.getPrice();
-    System.out.println("flight price="+price);
-    fl_list.add(flight);
-    System.out.println("flight added");
+//   Flight flight;
+//   int price=0;
+//   for(int i=0;i<flight_arr.length;i++){
+//     System.out.println("im here bro");
+//     flight = flightDao.findBynumber(flight_arr[i]);
+//     System.out.println("flight fetched="+flight.getNumber());
+//     price= price+ flight.getPrice();
+//     System.out.println("flight price="+price);
+//     fl_list.add(flight);
+//     System.out.println("flight added");
 
-  }
+//   }
 
-    System.out.println("price="+price);
+//     System.out.println("price="+price);
 
 
-  reservation = new Reservation(orderNumber, passenger, price, fl_list);
-  reservationDao.save(reservation);
-    System.out.println("done bro");
+//   reservation = new Reservation(orderNumber, passenger, price, fl_list);
+//   reservationDao.save(reservation);
+//     System.out.println("done bro");
 
-      // return ResponseEntity.ok(reservation);
+//       // return ResponseEntity.ok(reservation);
 
-}
+// }
 
-catch (Exception ex) {
-    return ResponseEntity.ok(err_r);
-    }
+// catch (Exception ex) {
+//     return ResponseEntity.ok(err_r);
+//     }
       
-       return ResponseEntity.ok(reservation);
-  }
+//        return ResponseEntity.ok(reservation);
+//   }
 
 
 
