@@ -259,8 +259,6 @@ try{
       //return "";
     }
     else{
-      if(flight.order_number!=null)
-      {
       flightDao.delete(flight);
       throw new Exception("The flight number "+number+" has been deleted successfully.-200");
       }

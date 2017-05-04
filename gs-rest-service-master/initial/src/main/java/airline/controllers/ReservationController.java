@@ -174,7 +174,7 @@ public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String
 
 
 @RequestMapping(value="{number}", 
-            produces=MediaType.APPLICATION_JSON_VALUE,method=RequestMethod.POST)
+            produces=MediaType.APPLICATION_JSON_VALUE,method=RequestMethod.PUT)
 public ResponseEntity<Reservation> updateReservation(@PathVariable String number,@RequestParam Map<String,String> requestParams) throws Exception{
 
   Reservation err_r=null;
