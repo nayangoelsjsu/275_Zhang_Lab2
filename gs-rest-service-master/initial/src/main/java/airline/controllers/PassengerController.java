@@ -1,7 +1,7 @@
 package airline.controllers;
 
 import java.util.*;
-import airline.models.Passenger;
+import airline.models.*;
 import airline.dao.PassengerDao;
 import javax.sql.DataSource;
 import javax.servlet.http.*;
@@ -191,7 +191,7 @@ public ResponseEntity<Passenger> create(@RequestParam Map<String,String> request
 
       Passenger pass= passengerDao.findById(sid);
       if(pass==null){
-      Passenger passenger = new Passenger(sid,firstname, lastname, age, gender, phone);
+      Passenger passenger = new Passenger(sid,firstname, lastname, age, gender, phone,null,null);
       passengerDao.save(passenger);
     }
     else{
@@ -234,6 +234,8 @@ throw new Exception("Passenger with id "+id+" does not exist.-404");
     String gender="";
     String phone="";
     String sage="";
+    List<Flight> flight=null;
+    List<Reservation> reservation=null;
 
 
    
@@ -245,7 +247,11 @@ throw new Exception("Passenger with id "+id+" does not exist.-404");
        gender=requestParams.get("gender");
        phone=requestParams.get("phone");
 
+
+
       Passenger user = passengerDao.findById(id);
+      flight=user.getFlight();
+      reservation=user.getReservation();
       if(user==null){
         throw new Exception("Sorry, the requested passenger with id "+id+" cannot be updated as it is not present.-404");
       }
@@ -254,6 +260,7 @@ throw new Exception("Passenger with id "+id+" does not exist.-404");
       user.setgender(gender);
       user.setphone(phone);
       user.setfirstname(firstname);
+
       passengerDao.save(user);
   
       
@@ -261,7 +268,7 @@ throw new Exception("Passenger with id "+id+" does not exist.-404");
       //return new Passenger(404,"xxx");
     
     //return "User succesfully updated!";
-    return new Passenger(id,firstname, lastname, age, gender, phone);
+    return new Passenger(id,firstname, lastname, age, gender, phone,flight,reservation);
   }
 
   // Private fields

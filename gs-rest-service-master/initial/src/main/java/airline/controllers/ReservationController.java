@@ -245,17 +245,128 @@ Reservation res = reservationDao.findByorderNumber(number);
 
 
 @RequestMapping(produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.GET)
-public ResponseEntity<Reservation> searchReservationXML(@RequestParam Map<String,String> requestParams){
+public ResponseEntity<List<Reservation>> searchReservationXML(@RequestParam Map<String,String> requestParams){
 
 
-  Reservation err_r=null;
+  List<Reservation> err_r=null;
   Reservation print_reservation=null;
-  Reservation reservation= null;
+  List<Reservation> listOfReservations= new ArrayList<Reservation>();
 
   try{
+    
+    List<String> finalReservationList= new ArrayList<String>();
+
+    List<String> reservationList= new ArrayList<String>();
+
+
+    List<String> flightListSource= new ArrayList<String>();
+
+
+    List<String> reservationListFlight= new ArrayList<String>();
+
+
+
+
+
+
+
  String passenger_id= requestParams.get("passengerId");
-   reservation=reservationDao.findBypassengerId(passenger_id); 
-   System.out.println("reservation="+reservation.getOrderNumber()); 
+ String source= requestParams.get("from");
+ String destination= requestParams.get("to");
+ String flightNumber= requestParams.get("flightNumber");
+
+if(passenger_id!=null){
+  System.out.println("in here bro!");
+  reservationList=reservationDao.findReservationByPassenger_id(passenger_id);
+System.out.println("prnting reservationList in passenger_id"+reservationList);
+
+  if(finalReservationList.size()>0){
+  System.out.println("in here in 1 bro!");
+
+    finalReservationList.retainAll(reservationList);
+  }
+  else{
+          for (String reservation : reservationList) {
+  System.out.println("in here in 2 bro!"+reservation);
+          finalReservationList.add(reservation);
+        }
+  System.out.println("in here in 3 bro!");
+
+
+  }
+  System.out.println("in here in 4 bro!");
+
+System.out.println("prnting finalReservationList in passenger_id"+finalReservationList);
+
+}
+
+if(flightNumber!=null){
+  reservationList=reservationDao.findReservationByFlight(flightNumber);
+  if(finalReservationList.size()>0){
+    finalReservationList.retainAll(reservationList);
+  }
+  else{
+          for (String reservation : reservationList) {
+              finalReservationList.add(reservation);
+        }
+  }
+
+}
+
+if(source!=null){
+
+  flightListSource=reservationDao.findFlightBySource(source);
+
+  for (String fl : flightListSource) {
+              reservationListFlight=reservationDao.findReservationByFlight(fl);
+              for (String reservation : reservationListFlight) {
+              reservationList.add(reservation);
+        }
+        }
+
+  if(finalReservationList.size()>0){
+    finalReservationList.retainAll(reservationList);
+  }
+  else{
+          for (String reservation : reservationList) {
+              finalReservationList.add(reservation);
+        }
+  }
+
+}
+
+if(destination!=null){
+
+  flightListSource=reservationDao.findFlightByDestination(destination);
+
+  for (String fl : flightListSource) {
+              reservationListFlight=reservationDao.findReservationByFlight(fl);
+              for (String reservation : reservationListFlight) {
+              reservationList.add(reservation);
+        }
+        }
+
+  if(finalReservationList.size()>0){
+    finalReservationList.retainAll(reservationList);
+  }
+  else{
+          for (String reservation : reservationList) {
+              finalReservationList.add(reservation);
+        }
+  }
+
+}
+
+Reservation res=null;
+
+  for (String reservation : finalReservationList) {
+          res= reservationDao.findByorderNumber(reservation);
+          listOfReservations.add(res);
+        }
+
+
+System.out.println("prnting reservations"+listOfReservations);
+
   //   String flightNumber= requestParams.get("flightNumber");
   // Flight flight= flightDao.findBynumber(flightNumber);
   // List<Flight> fl_list= new ArrayList<Flight>();
@@ -268,8 +379,7 @@ public ResponseEntity<Reservation> searchReservationXML(@RequestParam Map<String
 
   }
 
-       return ResponseEntity.ok(reservation);
-
+       return ResponseEntity.ok(listOfReservations);
 
 }
 

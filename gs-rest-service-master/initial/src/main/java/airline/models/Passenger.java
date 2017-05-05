@@ -37,6 +37,8 @@ public class Passenger {
     @Column(name = "phone")
     private String phone;
 
+ @OneToMany(mappedBy="passenger")
+private List<Reservation> reservation;
     // private int code;
     // private String msg;
 
@@ -46,6 +48,8 @@ public class Passenger {
     //     this.msg=msg;
     // }
 
+
+
 @ManyToMany(mappedBy="passenger")
     private List<Flight> flight;
 
@@ -53,13 +57,15 @@ public class Passenger {
 
     }
 
-    public Passenger(String id, String firstname,String lastname,int age,String gender,String phone) {
+    public Passenger(String id, String firstname,String lastname,int age,String gender,String phone, List<Flight> flight, List<Reservation> reservation) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.gender = gender;
         this.age = age;
         this.phone = phone;
+        this.flight= flight;
+        this.reservation=reservation;
 
     }
 
@@ -89,6 +95,13 @@ public class Passenger {
         return phone;
     }
 
+ public List<Flight> getFlight() {
+        return flight;
+    }
+
+    public List<Reservation> getReservation() {
+        return reservation;
+    }
     //  public int getcode() {
     //     return code;
     // }
@@ -122,6 +135,14 @@ public class Passenger {
 
     public void setphone(String phone) {
         this.phone=phone;
+    }
+
+public void setFlight(List<Flight> flight) {
+        this.flight=flight;
+    }
+
+    public void setReservation(List<Reservation> reservation) {
+        this.reservation=reservation;
     }
 
     // public void setcode(int code) {

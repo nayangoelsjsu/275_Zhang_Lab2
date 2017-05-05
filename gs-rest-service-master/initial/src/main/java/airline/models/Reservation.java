@@ -30,8 +30,11 @@ public class Reservation {
     @Column(name="price")
     private int price;
 
-   
-    @OneToOne(fetch=FetchType.LAZY)
+  //  @ManyToOne(fetch=FetchType.LAZY)
+  // @JoinColumn(name="OWNER_ID")
+  // private Employee owner;
+
+    @ManyToOne(fetch=FetchType.LAZY)
   @JoinColumn(name="passenger_id")
   @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
   private Passenger passenger;
