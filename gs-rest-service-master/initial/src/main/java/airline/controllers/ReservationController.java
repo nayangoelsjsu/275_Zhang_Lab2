@@ -148,6 +148,7 @@ public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String
 
   Flight flight;
   int price=0;
+  int seatsLeft=0;
   for(int i=0;i<flight_arr.length;i++){
     System.out.println("im here bro");
     flight = flightDao.findBynumber(flight_arr[i]);
@@ -157,6 +158,12 @@ public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String
 
     System.out.println("flight fetched="+flight.getNumber());
     price= price+ flight.getPrice();
+    seatsLeft= flight.getSeatsLeft() -1;
+    if(seatsLeft<0){
+      throw new Exception("Sorry, the capacity of the flight has exeeded. -400");
+    }
+    flight.setSeatsLeft(seatsLeft);
+    flightDao.save(flight);
     System.out.println("flight price="+price);
     fl_list.add(flight);
     System.out.println("flight added");

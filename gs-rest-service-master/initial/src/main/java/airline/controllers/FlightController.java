@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import airline.models.*;
 import airline.models.Plane;
 import airline.models.Passenger;
-import airline.dao.FlightDao;
+import airline.dao.*;
 import airline.dao.PlaneDao;
 
 
@@ -49,6 +49,10 @@ public class FlightController {
   private PlaneDao planeDao;
 
 
+  @Autowired
+  private ReservationDao reservationDao;
+
+
   public String randomIdgen(){
 
     Random rand = new Random();
@@ -62,47 +66,6 @@ public class FlightController {
     return randomg;
 
   }
-
-  // public int seatsLeft;
-
-
-  // @ResponseBody
-  // @RequestMapping(value="{number}",method=RequestMethod.GET)
-  // public String getById(@PathVariable("number") String number) {
-  //    int price;   
-  //    String num="";
-  //    String from="";
-  //    int seatsLeft;
-  //    String to="";
-  //    Date departureTime;
-  //    Date arrivalTime;
-  //    String description="";
-  //    int plane_id;
-  //    // List<Passenger> passengers;
-    
-
-  //   try {
-  //     Flight flight=flightDao.findBynumber(number);
-  //     num = flight.getNumber();
-  //     price = flight.getPrice();
-  //     // passengers = flight.getPassengers();
-  //     from = flight.getFrom();
-  //     seatsLeft=flight.getSeatsLeft();
-  //     to=flight.getTo();
-  //     departureTime=flight.getDepartureTime();
-  //     arrivalTime=flight.getArrivalTime();
-  //     description=flight.getDescription();
-  //     plane_id=flight.getPlane();
-
-  //   }
-  //   catch (Exception ex) {
-  //     return "Flight not found";
-  //   }
-  //   return "The flight number is: " + num;
-  // }
-
-
-
 
 @RequestMapping(value="{number}", 
             //params="json",
@@ -178,29 +141,11 @@ public ResponseEntity<Flight> getFlightXML(@PathVariable String number,@RequestP
     return ResponseEntity.ok(printFlight);
 }
 
-// @ExceptionHandler(Exception.class)
-// @ResponseBody
-// public Map<String,String> errorResponse(Exception ex, HttpServletResponse response){
-// Map<String,String> errorMap = new HashMap<String,String>();
-// errorMap.put("code","404");
-// errorMap.put("msg",ex.getMessage());
-// StringWriter sw = new StringWriter();
-// PrintWriter pw = new PrintWriter(sw);
-// ex.printStackTrace(pw);
-// String stackTrace = sw.toString();
-// //errorMap.put("errorStackTrace", stackTrace);
-// response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-// return errorMap;
-// }
 
-
-//@RequestMapping(value="{number}",method=RequestMethod.POST)   
-//public String create(@RequestParam Map<String,String> requestParams,@PathVariable String number){
-
-    // number=requestParams.get("number");
 @RequestMapping(value="{number}", 
             produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.POST)
-public ResponseEntity<Flight> createFlightXML(@PathVariable String number,@RequestParam Map<String,String> requestParams){
+public ResponseEntity<Flight> createFlightXML(@PathVariable String number,@RequestParam Map<String,String> requestParams)throws Exception 
+{
    String from=requestParams.get("from");
    String to=requestParams.get("to");
    String sprice=requestParams.get("price");
@@ -218,15 +163,57 @@ public ResponseEntity<Flight> createFlightXML(@PathVariable String number,@Reque
    //int id=2;
    Flight err_f=flightDao.findBynumber(number);
    Flight fl;
-try{
+   Flight printFlight;
+//try{
 
       String departureTime=requestParams.get("departureTime");
   // Date departureTime=new SimpleDateFormat("yyyy-mm-dd-hh").parse(sdepartureTime);
+
    String arrivalTime=requestParams.get("arrivalTime");
    //Date arrivalTime=new SimpleDateFormat("yyyy-mm-dd-hh").parse(sarrivalTime);
 
+   String[] departureTimeString= departureTime.split("-");
+
+   String[] arrivalTimeString= arrivalTime.split("-");
+
+   int departhour= Integer.parseInt(departureTimeString[3]);
+   int arrivalhour= Integer.parseInt(arrivalTimeString[3]);
+
+List<String> reservationForTime= reservationDao.findReservationByFlight(number);
+for(String resTime : reservationForTime){
+  Reservation res= reservationDao.findByorderNumber(resTime);
+  List<Flight> flightList= res.getFlight();
+
+  for(Flight f : flightList ){
+
+System.out.println("f num="+ f.getNumber()+ " number= "+ number );
+    if(!f.getNumber().equals(number)){
+
+    String arrivalTime2=f.getArrivalTime();
+  // Date departureTime=new SimpleDateFormat("yyyy-mm-dd-hh").parse(sdepartureTime);
+   String departureTime2=f.getDepartureTime();
+   //Date arrivalTime=new SimpleDateFormat("yyyy-mm-dd-hh").parse(sarrivalTime);
+
+   String[] departureTimeString2= departureTime2.split("-");
+
+   String[] arrivalTimeString2= arrivalTime2.split("-");
+
+   int departhour2= Integer.parseInt(departureTimeString2[3]);
+   int arrivalhour2= Integer.parseInt(arrivalTimeString2[3]);
+
+   System.out.println("arrivalhour= "+ arrivalhour+ " departhour2= "+ departhour2);
+
+   if(arrivalhour>=departhour2){
+      throw new Exception("Sorry, the flight is overlapping with a reserved flight- 400");
+
+   }
+}
+
+  }
+}
        fl=flightDao.findBynumber(number);
        System.out.println("fl yeh hai bhai"+fl);
+     
       if(fl==null){
       Plane plane= new Plane(model,manufacturer,capacity,yearOfManufacturer);
       planeDao.save(plane);
@@ -246,6 +233,7 @@ try{
       fl.setDepartureTime(departureTime);
       fl.setArrivalTime(arrivalTime);
       fl.setDescription(description);
+      
 
       Plane pl=fl.getPlane();
       int pl_id=pl.getId();
@@ -257,39 +245,58 @@ try{
       }
       else{
       pl_update.setModel(model);
+
+      List<String> reservedSeats= reservationDao.findReservationByFlight(number);
+
+      System.out.println("outside if reserved seats="+ reservedSeats.size()+" capacity= "+capacity);
+    if(reservedSeats.size()>capacity){
+      System.out.println("inside if");
+      throw new Exception("Sorry, the capacity of the flight has to be more than the Reserved Seats. -400");
+    }
       pl_update.setCapacity(capacity);
+      fl.setSeatsLeft(capacity-reservedSeats.size());
       pl_update.setYearOfManufacture(yearOfManufacturer);
       pl_update.setManufacturer(manufacturer);
 
       flightDao.save(fl);
       planeDao.save(pl_update);
+
+      List<Passenger> passengerList= fl.getPassenger();
+    
+    for(Passenger passenger : passengerList){
+      passenger.setFlight(null);
+      passenger.setReservation(null);
     }
+
+    printFlight=new Flight(fl.getNumber(), fl.getFrom(), fl.getPrice(),fl.getTo(),fl.getSeatsLeft(),fl.getDepartureTime(),fl.getArrivalTime(),fl.getDescription(),fl.getPlane());
+          printFlight.setPassenger(passengerList);
 
     }
 
-}
-  catch (Exception ex) {
-    return ResponseEntity.ok(err_f);
-      //return "Error creating the Flight: " + ex.toString();
     }
+
+//}
+  
       //return new Passenger(id,firstname,lastname,age,gender,phone);
     //return "Flight succesfully created with number = " + number;
-       return ResponseEntity.ok(fl);
+       return ResponseEntity.ok(printFlight);
 
-}
-//!!!!!!
- @RequestMapping(value="{number}",method = RequestMethod.DELETE)
+ }
+
+
+@RequestMapping(value="{number}",method = RequestMethod.DELETE)
   @ResponseBody
   public void delete(@PathVariable("number") String number) throws Exception {
     //try {
       Flight flight = flightDao.findBynumber(number);
+
       if(flight==null){
       throw new Exception("Sorry, the requested flight "+number+" could not be deleted as the flight number is not present.-404");
       //return "";
     }
-    else{
-      if(flight.getNumber()!=null)
-      {
+    else{                     
+      List<String> reservationForFlight= flightDao.findReservationByFlight(number);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+      if(reservationForFlight.size()==0){
       flightDao.delete(flight);
       throw new Exception("The flight number "+number+" has been deleted successfully.-200");
       }
@@ -300,70 +307,8 @@ try{
       //return "";
     }
     //}
-    // catch (Exception ex) {
-    //   System.out.println("Error deleting the flight:" + ex.toString());
-    //   throw new Exception("Sorry, the requested flight "+number+" could not be deleted as the flight number is not present.-404");
-    // }
-    //return "";
+  
    
   }
 
-  // @RequestMapping("/create",method=POST)
-  // @ResponseBody
-  // public String create(String firstname, String lastname, int age, String gender, String phone) {
-  //   String userId = "";
-  //   try {
-  //     Passenger passenger = new Passenger(firstname, lastname, age, gender, phone);
-  //     passengerDao.save(user);
-  //     passengerId = String.valueOf(passenger.getId());
-  //   }
-  //   catch (Exception ex) {
-  //     return "Error creating the passenger: " + ex.toString();
-  //   }
-  //   return "Passenger succesfully created with id = " + passengerId;
-  // }
-  
-//   // /**
-//   //  * GET /delete  --> Delete the user having the passed id.
-//   //  */
-
-//   // @RequestMapping("/delete")
-//   // @ResponseBody
-//   // public String delete(long id) {
-//   //   try {
-//   //     User user = new User(id);
-//   //     passengerDao.delete(user);
-//   //   }
-//   //   catch (Exception ex) {
-//   //     return "Error deleting the user:" + ex.toString();
-//   //   }
-//   //   return "User succesfully deleted!";
-//   // }
-  
-  
-  
-//   // /**
-//   //  * GET /update  --> Update the email and the name for the user in the 
-//   //  * database having the passed id.
-//   //  */
-
-
-//   // @RequestMapping("/update")
-//   // @ResponseBody
-//   // public String updateUser(long id, String email, String name) {
-//   //   try {
-//   //     User user = passengerDao.findOne(id);
-//   //     user.setEmail(email);
-//   //     user.setName(name);
-//   //     passengerDao.save(user);
-//   //   }
-//   //   catch (Exception ex) {
-//   //     return "Error updating the user: " + ex.toString();
-//   //   }
-//   //   return "User succesfully updated!";
-//   // }
-
-//   // Private fields
-
-  
 }
