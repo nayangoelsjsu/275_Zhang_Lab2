@@ -91,7 +91,20 @@ public ResponseEntity<Reservation> getReservation(@PathVariable String number) t
     {
 throw new Exception("Sorry, the requested reservation number "+number+" does not exist.-404");
     }
-    return ResponseEntity.ok(reservation);
+
+    Passenger passenger= reservation.getPassenger();
+    passenger.setFlight(null);
+    passenger.setReservation(null);
+
+    List<Flight> flightList= reservation.getFlight();
+    for(Flight flight : flightList){
+      flight.setPassenger(null);
+      flight.setReservation(null);
+    }
+
+    Reservation printReservation=new Reservation(reservation.getOrderNumber(), passenger, reservation.getPrice(),flightList);
+
+    return ResponseEntity.ok(printReservation);
 }
 
 @ExceptionHandler(Exception.class)
@@ -119,10 +132,14 @@ public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String
 
   Reservation err_r=null;
   Reservation reservation=null;
+  Reservation printReservation=null;
 
   //try{
   String passenger_id= requestParams.get("passengerId");
   Passenger passenger= passengerDao.findById(passenger_id);
+  List<Reservation> passenger_reservationList= passenger.getReservation();
+  List<Flight> passenger_flightList= passenger.getFlight();
+
   String flight_list= requestParams.get("flightLists");
   String[] flight_arr= flight_list.split(",");
   // List<String> listStrings = new ArrayList<String>()
@@ -135,8 +152,9 @@ public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String
     System.out.println("im here bro");
     flight = flightDao.findBynumber(flight_arr[i]);
     List <Passenger> passenger_list= flight.getPassenger();
-    passenger_list.add(passenger);
+    passenger_list.add(passenger); 
     flight.setPassenger(passenger_list);
+
     System.out.println("flight fetched="+flight.getNumber());
     price= price+ flight.getPrice();
     System.out.println("flight price="+price);
@@ -144,13 +162,27 @@ public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String
     System.out.println("flight added");
 
   }
-
+    // passenger_flightList.add(fl_list);
     System.out.println("price="+price);
-
  reservation= reservationDao.findByorderNumber(orderNumber);
       if(reservation==null){
       reservation = new Reservation(orderNumber, passenger, price, fl_list);
+      // passenger_reservationList.add(reservation);
+      // passengerDao.save(passenger);
       reservationDao.save(reservation);
+
+      Passenger pass= reservation.getPassenger();
+    pass.setFlight(null);
+    pass.setReservation(null);
+
+    List<Flight> flightList= reservation.getFlight();
+    for(Flight f : flightList){
+      f.setPassenger(null);
+      f.setReservation(null);
+    }
+
+    printReservation=new Reservation(reservation.getOrderNumber(), pass, reservation.getPrice(),flightList);
+
     }
     else{
     throw new Exception("Another reservation with same number "+orderNumber+" exists.-400");
@@ -158,8 +190,8 @@ public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String
   
   
     System.out.println("done bro");
-    Reservation res1= reservationDao.findByorderNumber(orderNumber);
-    return ResponseEntity.ok(res1);
+    // Reservation res1= reservationDao.findByorderNumber(orderNumber);
+    return ResponseEntity.ok(printReservation);
 
       // return ResponseEntity.ok(reservation);
 
@@ -179,6 +211,8 @@ public ResponseEntity<Reservation> updateReservation(@PathVariable String number
 
   Reservation err_r=null;
   Reservation reservation=null;
+  Reservation printReservation=null;
+
 
 
   // String passenger_id= requestParams.get("passengerId");
@@ -234,12 +268,27 @@ Reservation res = reservationDao.findByorderNumber(number);
       else{
   reservation.setFlight(fl_list);
   reservationDao.save(reservation);
+
+
+      Passenger pass= reservation.getPassenger();
+    pass.setFlight(null);
+    pass.setReservation(null);
+
+    List<Flight> flightList= reservation.getFlight();
+    for(Flight f : flightList){
+      f.setPassenger(null);
+      f.setReservation(null);
+    }
+
+    printReservation=new Reservation(reservation.getOrderNumber(), pass, reservation.getPrice(),flightList);
+
+
 }
     System.out.println("done bro");
 
       // return ResponseEntity.ok(reservation);
       
-       return ResponseEntity.ok(reservation);
+       return ResponseEntity.ok(printReservation);
   }
 
 
@@ -251,6 +300,8 @@ public ResponseEntity<List<Reservation>> searchReservationXML(@RequestParam Map<
   List<Reservation> err_r=null;
   Reservation print_reservation=null;
   List<Reservation> listOfReservations= new ArrayList<Reservation>();
+  List<Reservation> listOfReservationsPrint= new ArrayList<Reservation>();
+
 
   try{
     
@@ -357,12 +408,38 @@ if(destination!=null){
 
 }
 
+
+
 Reservation res=null;
 
   for (String reservation : finalReservationList) {
           res= reservationDao.findByorderNumber(reservation);
           listOfReservations.add(res);
         }
+
+for( Reservation resEdit : listOfReservations){
+
+Passenger pass= resEdit.getPassenger();
+    pass.setFlight(null);
+    pass.setReservation(null);
+
+    List<Flight> flightList= resEdit.getFlight();
+    for(Flight f : flightList){
+      f.setPassenger(null);
+      f.setReservation(null);
+    }
+
+    Reservation printReservation=new Reservation(resEdit.getOrderNumber(), pass, resEdit.getPrice(),flightList);
+    listOfReservationsPrint.add(printReservation);
+
+}
+
+
+
+
+
+
+
 
 
 System.out.println("prnting reservations"+listOfReservations);
@@ -394,6 +471,7 @@ throw new Exception("Reservation with orderNumber "+orderNumber+" does not exist
       }
       else{
       reservationDao.delete(reservation);
+      // getSeatsLeft()+1;
       throw new Exception("Reservation orderNumber "+orderNumber+" deleted successfully.-200");
     }
   }

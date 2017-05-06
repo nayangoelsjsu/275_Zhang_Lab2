@@ -48,95 +48,32 @@ public class PassengerController {
 
   }
 
-  @ResponseBody
-  //@RequestMapping(value="{id}",method = RequestMethod.GET)
-//   @RequestMapping(value="{id}/", 
-//             params="format=json",
-//   method = RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
-//   public Passenger getById(@PathVariable("id") int id) {
-//     String firstname="";
-//     String lastname="";
-//     int age=0;
-//     String gender="";
-//     String phone="";
-
-//     try {
-//       System.out.println(id);
-//       Passenger passenger = passengerDao.findById(id);
-//       firstname = passenger.getfirstname();
-//       lastname = passenger.getlastname();
-//       age = passenger.getage();
-//       gender = passenger.getgender();
-//       phone = passenger.getphone();
-//       System.out.println("im here as well with firstname="+firstname);
-//     }
-//     catch (Exception ex) {
-//       System.out.println("Im here maybe");
-//       return new Passenger(404,"Sorry, the requested passenger with id"+id+" does not exist");
-//     }
-
-//     System.out.println("firstname="+firstname);
-//     if(Strings.isNullOrEmpty(firstname)){
-//       return new Passenger(404,"Sorry, the requested passenger with id"+id+" does not exist");
-
-//     }
-//     else{
-//     return new Passenger(id,firstname,lastname,age,gender,phone);
-//   }
-// }
-//   @RequestMapping(value="{id}/", 
-//             params="format=xml",
-//             method = RequestMethod.GET,produces=MediaType.APPLICATION_XML_VALUE)
-// public Passenger getByIdd(@PathVariable("id") int id) {
-//     String firstname="";
-//     String lastname="";
-//     int age=0;
-//     String gender="";
-//     String phone="";
-
-//     try {
-//       System.out.println(id);
-//       Passenger passenger = passengerDao.findById(id);
-//       firstname = passenger.getfirstname();
-//       lastname = passenger.getlastname();
-//       age = passenger.getage();
-//       gender = passenger.getgender();
-//       phone = passenger.getphone();
-//       System.out.println("im here as well with firstname="+firstname);
-//     }
-//     catch (Exception ex) {
-//       System.out.println("Im here maybe");
-//       return new Passenger(404,"Sorry, the requested passenger with id"+id+" does not exist");
-//     }
-
-//     System.out.println("firstname="+firstname);
-//     if(Strings.isNullOrEmpty(firstname)){
-//       return new Passenger(404,"Sorry, the requested passenger with id"+id+" does not exist");
-
-//     }
-//     else{
-//     return new Passenger(id,firstname,lastname,age,gender,phone);
-//   }
-//   }
-
-//getById ends
-
-
-// create passanger 
-
-
-
+@ResponseBody
 @RequestMapping(value="/passenger/{id}", 
             //params="json",
             produces=MediaType.APPLICATION_JSON_VALUE,method=RequestMethod.GET)
 
 public ResponseEntity<Passenger> getPassenger(@PathVariable String id) throws Exception{
     Passenger passenger = passengerDao.findById(id);
+
     if(passenger==null)
     {
 throw new Exception("Sorry, the requested passenger with id "+id+" does not exist-404");
     }
-    return ResponseEntity.ok(passenger);
+    List<Reservation> reservationList= passenger.getReservation();
+    
+    for(Reservation reservation : reservationList){
+      reservation.setPassenger(null);
+      List<Flight> flightList= reservation.getFlight();
+      for(Flight flight : flightList){
+      flight.setPassenger(null);
+    }
+    }
+
+    Passenger printPassenger=new Passenger(passenger.getId(), passenger.getfirstname(), passenger.getlastname(),passenger.getage(),passenger.getgender(),passenger.getphone(),null,reservationList);
+
+
+    return ResponseEntity.ok(printPassenger);
 } 
 
 @ExceptionHandler(Exception.class)
@@ -164,11 +101,29 @@ return errorMap;
             produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.GET)
 public ResponseEntity<Passenger> getPassengerXML(@PathVariable String id,@RequestParam boolean xml) throws Exception{
     Passenger passenger = passengerDao.findById(id);
+
     if(passenger==null)
     {
 throw new Exception("Sorry, the requested passenger with id "+id+" does not exist-404");
     }
-    return ResponseEntity.ok(passenger);
+    
+    List<Reservation> reservationList= passenger.getReservation();
+    
+    for(Reservation reservation : reservationList){
+      reservation.setPassenger(null);
+      List<Flight> flightList= reservation.getFlight();
+      for(Flight flight : flightList){
+      flight.setPassenger(null);
+    }
+    }
+
+    Passenger printPassenger=new Passenger(passenger.getId(), passenger.getfirstname(), passenger.getlastname(),passenger.getage(),passenger.getgender(),passenger.getphone(),null,reservationList);
+
+    if(passenger==null)
+    {
+throw new Exception("Sorry, the requested passenger with id "+id+" does not exist-404");
+    }
+    return ResponseEntity.ok(printPassenger);
 }
 
 
@@ -227,15 +182,15 @@ throw new Exception("Passenger with id "+id+" does not exist.-404");
 
   @RequestMapping(value="/passenger/{id}",method = RequestMethod.PUT)
   @ResponseBody
-  public Passenger updateUser(@RequestParam Map<String,String> requestParams, @PathVariable("id") String id) throws Exception {
+  public ResponseEntity<Passenger> updateUser(@RequestParam Map<String,String> requestParams, @PathVariable("id") String id) throws Exception {
     String firstname="";
     String lastname="";
     int age=0;;
     String gender="";
     String phone="";
     String sage="";
-    List<Flight> flight=null;
-    List<Reservation> reservation=null;
+
+
 
 
    
@@ -247,11 +202,7 @@ throw new Exception("Passenger with id "+id+" does not exist.-404");
        gender=requestParams.get("gender");
        phone=requestParams.get("phone");
 
-
-
       Passenger user = passengerDao.findById(id);
-      flight=user.getFlight();
-      reservation=user.getReservation();
       if(user==null){
         throw new Exception("Sorry, the requested passenger with id "+id+" cannot be updated as it is not present.-404");
       }
@@ -260,15 +211,21 @@ throw new Exception("Passenger with id "+id+" does not exist.-404");
       user.setgender(gender);
       user.setphone(phone);
       user.setfirstname(firstname);
-
       passengerDao.save(user);
-  
-      
-      //return "Error updating the user: " + ex.toString();
-      //return new Passenger(404,"xxx");
+
+      List<Reservation> reservationList= user.getReservation();
     
-    //return "User succesfully updated!";
-    return new Passenger(id,firstname, lastname, age, gender, phone,flight,reservation);
+    for(Reservation reservation : reservationList){
+      reservation.setPassenger(null);
+      List<Flight> flightList= reservation.getFlight();
+      for(Flight flight : flightList){
+      flight.setPassenger(null);
+    }
+    }
+    
+    Passenger printPassenger=new Passenger(user.getId(), user.getfirstname(), user.getlastname(),user.getage(),user.getgender(),user.getphone(),null,reservationList);
+    return ResponseEntity.ok(printPassenger);
+
   }
 
   // Private fields

@@ -57,11 +57,11 @@ public class Flight {
 
     @OneToOne(fetch=FetchType.LAZY)
   @JoinColumn(name="plane_id")
-  @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
   private Plane plane;
 
 @ManyToMany
 @JoinTable(name="passenger_flight_rel", joinColumns={@JoinColumn(name="number")},inverseJoinColumns={@JoinColumn(name="id")})
+  @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 private List<Passenger> passenger;
 
     @ManyToMany(mappedBy="flight")

@@ -10,7 +10,7 @@ import java.io.*;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.http.HttpStatus; 
 
-import airline.models.Flight;
+import airline.models.*;
 import airline.models.Plane;
 import airline.models.Passenger;
 import airline.dao.FlightDao;
@@ -110,12 +110,28 @@ public class FlightController {
 
 public ResponseEntity<Flight> getFlight(@PathVariable String number) throws Exception{
     Flight flight = flightDao.findBynumber(number);
+
+    if(flight==null)
+    {
+      throw new Exception("Sorry, the requested flight "+number+" does not exist-404");
+    }
+
+     List<Passenger> passengerList= flight.getPassenger();
+    
+    for(Passenger passenger : passengerList){
+      passenger.setFlight(null);
+      passenger.setReservation(null);
+    }
+
+    Flight printFlight=new Flight(flight.getNumber(), flight.getFrom(), flight.getPrice(),flight.getTo(),flight.getSeatsLeft(),flight.getDepartureTime(),flight.getArrivalTime(),flight.getDescription(),flight.getPlane());
+          printFlight.setPassenger(passengerList);
+
     System.out.println("F: "+flight);
     if(flight==null)
     {
       throw new Exception("Sorry, the requested flight "+number+" does not exist-404");
     }
-    return ResponseEntity.ok(flight);
+    return ResponseEntity.ok(printFlight);
 } 
 
 @ExceptionHandler(Exception.class)
@@ -142,11 +158,24 @@ return errorMap;
             produces=MediaType.APPLICATION_XML_VALUE,method=RequestMethod.GET)
 public ResponseEntity<Flight> getFlightXML(@PathVariable String number,@RequestParam boolean xml) throws Exception{
     Flight flight = flightDao.findBynumber(number);
-     if(flight==null)
+ 
+ if(flight==null)
     {
       throw new Exception("Sorry, the requested flight "+number+" does not exist-404");
     }
-    return ResponseEntity.ok(flight);
+       List<Passenger> passengerList= flight.getPassenger();
+    
+    for(Passenger passenger : passengerList){
+      passenger.setFlight(null);
+      passenger.setReservation(null);
+    }
+
+    Flight printFlight=new Flight(flight.getNumber(), flight.getFrom(), flight.getPrice(),flight.getTo(),flight.getSeatsLeft(),flight.getDepartureTime(),flight.getArrivalTime(),flight.getDescription(),flight.getPlane());
+          printFlight.setPassenger(passengerList);
+
+
+    
+    return ResponseEntity.ok(printFlight);
 }
 
 // @ExceptionHandler(Exception.class)

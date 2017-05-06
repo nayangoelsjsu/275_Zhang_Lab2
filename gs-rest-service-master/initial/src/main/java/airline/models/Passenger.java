@@ -39,16 +39,6 @@ public class Passenger {
 
  @OneToMany(mappedBy="passenger")
 private List<Reservation> reservation;
-    // private int code;
-    // private String msg;
-
-    // public Passenger(int code, String msg){
-    //     System.out.println("main yahan hoon");
-    //     this.code=code;
-    //     this.msg=msg;
-    // }
-
-
 
 @ManyToMany(mappedBy="passenger")
     private List<Flight> flight;
@@ -144,13 +134,5 @@ public void setFlight(List<Flight> flight) {
     public void setReservation(List<Reservation> reservation) {
         this.reservation=reservation;
     }
-
-    // public void setcode(int code) {
-    //     this.code=code;
-    // }
-
-    // public void setmsg(String msg) {
-    //     this.msg=msg;
-    // }
 
 }
