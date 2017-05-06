@@ -57,30 +57,6 @@ public class ReservationController {
 
   }
 
-  
-  // @ResponseBody
-  // @RequestMapping("{orderNumber}")
-  // public String getById(@PathVariable("orderNumber") String orderNumber) {
-  //   String orderNum="";
-  //   int price;
-  //   String passenger;
-  //   // List<Flight> flight;
-    
-
-  //   try {
-  //     //int o=Integer.parseInt(orderNum);
-  //     Reservation reservation=reservationDao.findByorderNumber(orderNumber);
-  //     orderNum = reservation.getOrderNumber();
-  //     price = reservation.getPrice();
-  //     passenger = reservation.getPassenger_id();
-  //     // flight = reservation.getFlights();
-  //   }
-  //   catch (Exception ex) {
-  //     return "Reservation not found";
-  //   }
-  //   return "The order number is: " + orderNum;
-  // }
-
 
   @RequestMapping(value="{number}", 
             produces=MediaType.APPLICATION_JSON_VALUE,method=RequestMethod.GET)
@@ -213,7 +189,7 @@ public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String
 
 
 @RequestMapping(value="{number}", 
-            produces=MediaType.APPLICATION_JSON_VALUE,method=RequestMethod.PUT)
+            produces=MediaType.APPLICATION_JSON_VALUE,method=RequestMethod.POST)
 public ResponseEntity<Reservation> updateReservation(@PathVariable String number,@RequestParam Map<String,String> requestParams) throws Exception{
 
   Reservation err_r=null;
@@ -233,6 +209,9 @@ public ResponseEntity<Reservation> updateReservation(@PathVariable String number
   // List<String> listStrings = new ArrayList<String>()
 
   reservation= reservationDao.findByorderNumber(number);
+  if(reservation==null){
+        throw new Exception("Sorry, the requested reservation with number "+number+" cannot be updated as it is not present.-404");
+      }
   List<Flight> fl_list= reservation.getFlight();
 
   Flight flight;
@@ -477,6 +456,15 @@ System.out.println("prnting reservations"+listOfReservations);
 throw new Exception("Reservation with orderNumber "+orderNumber+" does not exist.-404");
       }
       else{
+      
+      List<Flight> flightList=reservation.getFlight();
+
+      int seatsLeft=0;
+      for(Flight flight : flightList){
+        seatsLeft=flight.getSeatsLeft()+1;
+        flight.setSeatsLeft(seatsLeft);
+        flightDao.save(flight);
+      }
       reservationDao.delete(reservation);
       // getSeatsLeft()+1;
       throw new Exception("Reservation orderNumber "+orderNumber+" deleted successfully.-200");

@@ -2,7 +2,7 @@ package airline.controllers;
 
 import java.util.*;
 import airline.models.*;
-import airline.dao.PassengerDao;
+import airline.dao.*;
 import javax.sql.DataSource;
 import javax.servlet.http.*;
 import java.io.*;
@@ -36,6 +36,9 @@ public class PassengerController {
 
 @Autowired
   private PassengerDao passengerDao;
+
+  @Autowired
+  private ReservationDao reservationDao;
 
 //get by ID
 
@@ -106,7 +109,7 @@ public ResponseEntity<Passenger> getPassengerXML(@PathVariable String id,@Reques
     {
 throw new Exception("Sorry, the requested passenger with id "+id+" does not exist-404");
     }
-    
+
     List<Reservation> reservationList= passenger.getReservation();
     
     for(Reservation reservation : reservationList){
@@ -164,19 +167,27 @@ public ResponseEntity<Passenger> create(@RequestParam Map<String,String> request
 
   @RequestMapping(value="/passenger/{id}",method = RequestMethod.DELETE)
   @ResponseBody
-  public Passenger delete(@PathVariable("id") String id) throws Exception{
+  public void delete(@PathVariable("id") String id) throws Exception{
    
       Passenger passenger = passengerDao.findById(id);
       if(passenger==null){
 throw new Exception("Passenger with id "+id+" does not exist.-404");
       }
       else{
+      List <String> reservationList= reservationDao.findReservationByPassenger_id(id);
+      for(String reservationNum : reservationList){
+        Reservation reservation= reservationDao.findByorderNumber(reservationNum);
+        reservationDao.delete(reservation);
+      }  
+      passengerDao.deletePassengerFlightRel(id);
+      System.out.println("deleted pass flight rel");
       passengerDao.delete(passenger);
+      System.out.println("deleted passenger");
       throw new Exception("Passenger id "+id+" deleted successfully.-200");
     }
     
     
-      //return new Passenger(200,"The requested passenger with id"+id+" deleted successfully");
+      // return new Passenger(200,"The requested passenger with id"+id+" deleted successfully");
   }
 
 

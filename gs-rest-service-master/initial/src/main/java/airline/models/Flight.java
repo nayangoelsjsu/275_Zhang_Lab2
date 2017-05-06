@@ -48,13 +48,6 @@ public class Flight {
     @Column(name = "description")
     private String description;
 
-    // @Column(name = "plane_id")
-    // private int plane_id;
-
-
-    // @Column(name="passenger_id")
-    // private String passenger_id;
-
     @OneToOne(fetch=FetchType.LAZY)
   @JoinColumn(name="plane_id")
   private Plane plane;
