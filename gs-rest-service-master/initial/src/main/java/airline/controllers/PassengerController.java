@@ -63,10 +63,12 @@ public ResponseEntity<Passenger> getPassenger(@PathVariable String id) throws Ex
     {
 throw new Exception("Sorry, the requested passenger with id "+id+" does not exist-404");
     }
+
     List<Reservation> reservationList= passenger.getReservation();
     
     for(Reservation reservation : reservationList){
       reservation.setPassenger(null);
+      System.out.println("Reservation "+ reservation.getOrderNumber()+ " set pass to null");
       List<Flight> flightList= reservation.getFlight();
       for(Flight flight : flightList){
       flight.setPassenger(null);

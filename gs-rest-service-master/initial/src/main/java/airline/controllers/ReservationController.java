@@ -125,6 +125,7 @@ public ResponseEntity<Reservation> createReservationXML(@RequestParam Map<String
   Flight flight;
   int price=0;
   int seatsLeft=0;
+  
   for(int i=0;i<flight_arr.length;i++){
     System.out.println("im here bro");
     flight = flightDao.findBynumber(flight_arr[i]);
